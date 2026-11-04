@@ -1,0 +1,107 @@
+name: Publish experiment journals
+
+# Renders every <experiment>/journal on the pull request branch and publishes
+# it to the gh-pages branch under pr-<number>/<experiment>/, keeping the
+# reports of other pull requests.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "**/journal/**"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # Fork pull requests get a read-only token.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      PR: ${{ github.event.number }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Render journals
+        id: render
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          experiments=()
+          while IFS= read -r index; do
+            journal="$(dirname "$index")"
+            exp="$(dirname "$journal")"
+            exp="${exp#./}"
+            python3 tools/render_journal.py --journal "$journal" --site "_site/$exp"
+            experiments+=("$exp")
+          done < <(find . -path ./.git -prune -o -path ./.pixi -prune -o \
+                     -path '*/journal/index.md' -print | sort)
+          if [ "${#experiments[@]}" -eq 0 ]; then
+            echo "No */journal/index.md found" >&2
+            exit 1
+          fi
+          {
+            echo '<!doctype html><meta charset="utf-8"><title>PR '"$PR"' journals</title><ul>'
+            for exp in "${experiments[@]}"; do
+              echo "<li><a href=\"$exp/\">$exp</a></li>"
+            done
+            echo '</ul>'
+          } > _site/index.html
+          printf '%s\n' "${experiments[@]}" > _experiments.txt
+
+      - name: Push to gh-pages
+        run: |
+          set -euo pipefail
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null; then
+            git clone --depth 1 --branch gh-pages \
+              "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" _pages
+          else
+            git init -b gh-pages _pages
+            git -C _pages remote add origin \
+              "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            touch _pages/.nojekyll
+          fi
+          rm -rf "_pages/pr-$PR"
+          cp -a _site "_pages/pr-$PR"
+          git -C _pages add -A
+          git -C _pages commit -m "Publish journals for pull request #$PR" || exit 0
+          git -C _pages push origin gh-pages
+
+      - name: Comment with report links
+        run: |
+          set -euo pipefail
+          owner="${GITHUB_REPOSITORY%%/*}"
+          repo="${GITHUB_REPOSITORY#*/}"
+          base="https://${owner,,}.github.io/${repo}/pr-${PR}"
+          marker="<!-- experiment-journals -->"
+          {
+            echo "$marker"
+            echo "Rendered experiment journals:"
+            echo
+            while IFS= read -r exp; do
+              echo "- **${base}/${exp}/**"
+            done < _experiments.txt
+            echo
+            echo "Updated on each push. GitHub Pages may take a minute to refresh."
+          } > _comment.md
+          cat _comment.md >> "$GITHUB_STEP_SUMMARY"
+          id="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+                 --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"$marker\"))) | .id" \
+                 | head -n 1)"
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}" -F body=@_comment.md >/dev/null
+          else
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -F body=@_comment.md >/dev/null
+          fi

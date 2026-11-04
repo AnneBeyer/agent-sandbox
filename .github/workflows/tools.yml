@@ -1,0 +1,24 @@
+name: Tools
+
+on:
+  pull_request:
+    paths:
+      - "tools/**"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "tools/**"
+      - ".github/workflows/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pandoc and shellcheck
+        run: sudo apt-get update && sudo apt-get install -y pandoc shellcheck
+      - name: Test the journal renderer
+        run: python3 -m unittest discover -s tools -p 'test_*.py' -v
+      - name: Lint shell scripts
+        run: shellcheck tools/*.sh

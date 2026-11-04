@@ -1,0 +1,13 @@
+# Shared tools only. Each experiment has its own pixi.toml in its directory.
+[workspace]
+name = "agent-sandbox-tools"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64"]
+
+[dependencies]
+python = ">=3.12"
+pandoc = ">=3.1"
+
+[tasks]
+render = "python tools/render_journal.py"
+test-tools = { cmd = "python -m unittest discover -s tools -p 'test_*.py' -v" }
