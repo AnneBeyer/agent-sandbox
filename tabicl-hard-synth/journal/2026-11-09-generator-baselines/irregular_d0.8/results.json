@@ -3,9 +3,12 @@
   "family": "irregular",
   "difficulty": 0.8,
   "task": "classification",
-  "n_test": 50000,
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
   "bayes": {
-    "accuracy": 0.8417752981185913
+    "accuracy": 0.8408704996109009
   },
   "knobs": {
     "n_sinusoids": 8,
@@ -106,8 +109,29 @@
       "roc_auc": 0.5004319033599582,
       "fit_seconds": 0.1,
       "predict_seconds": 0.07
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.3448,
+      "log_loss": 1.1013388633728027,
+      "roc_auc": 0.5084738948638899,
+      "fit_seconds": 0.65,
+      "predict_seconds": 38.44,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.3294,
+      "log_loss": 1.0992060899734497,
+      "roc_auc": 0.49038201727168745,
+      "fit_seconds": 0.68,
+      "predict_seconds": 419.27,
+      "context_rows": 10000
     }
   ],
+  "dropped_columns": [],
   "hardware": {
     "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
     "cpu_count": 4,
@@ -122,5 +146,9 @@
     "scikit-learn": "1.9.1",
     "lightgbm": "4.7.0"
   },
-  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000"
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/irregular_d0.8 --out journal/2026-11-09-generator-baselines/irregular_d0.8 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/irregular_d0.8 --out journal/2026-11-09-generator-baselines/irregular_d0.8 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
 }
