@@ -52,11 +52,60 @@ def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("results", nargs="+")
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--grid-svg", type=Path, default=None, help="also draw all learning curves as small multiples")
     a = p.parse_args(argv)
     df = load(a.results)
     a.out.write_text(gap_table(df) + "\n")
     print(gap_table(df))
+    if a.grid_svg:
+        plot_grid(df, a.grid_svg)
 
 
 if __name__ == "__main__":
     main()
+
+
+def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
+    """Small multiples: one panel per dataset, metric vs training rows, with
+    the Bayes reference dashed and a single shared legend."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    from .evaluate import INK, PALETTE
+
+    datasets = list(dict.fromkeys(df["dataset"]))
+    nrows = -(-len(datasets) // ncols)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(3.2 * ncols, 2.6 * nrows), dpi=100, squeeze=False)
+    fig.patch.set_facecolor(INK["surface"])
+    for ax, ds in zip(axes.ravel(), datasets):
+        g = df[df["dataset"] == ds]
+        metric = g["metric"].iloc[0]
+        ax.set_facecolor(INK["surface"])
+        for model in PALETTE:
+            gm = g[g["model"] == model].sort_values("n_train")
+            if len(gm):
+                ax.plot(gm["n_train"], gm["value"], color=PALETTE[model], lw=2, marker="o", ms=4, label=model)
+        ax.axhline(g["bayes"].iloc[0], color=INK["secondary"], lw=1.2, ls="--", label="Bayes optimal")
+        ax.set_xscale("log")
+        ax.set_title(ds, fontsize=9, loc="left", color=INK["primary"])
+        ax.grid(True, color=INK["grid"], lw=0.8)
+        ax.tick_params(labelsize=7, colors=INK["secondary"])
+        for s in ("top", "right"):
+            ax.spines[s].set_visible(False)
+        for s in ("left", "bottom"):
+            ax.spines[s].set_color(INK["axis"])
+        if metric == "accuracy":
+            ax.set_ylim(min(0.3, g["value"].min() - 0.02), min(1.0, g["bayes"].iloc[0] + 0.05))
+    for ax in axes.ravel()[len(datasets):]:
+        ax.axis("off")
+    for ax in axes[-1]:
+        ax.set_xlabel("training rows", fontsize=8, color=INK["primary"])
+    for ax in axes[:, 0]:
+        ax.set_ylabel(df["metric"].iloc[0], fontsize=8, color=INK["primary"])
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.01))
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    fig.savefig(path, format="svg")
+    plt.close(fig)
