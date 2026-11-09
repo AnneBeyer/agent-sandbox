@@ -166,7 +166,11 @@ Per-dataset plots and raw numbers are in `<dataset>/learning_curve.svg` and
   10k and 100k rows. At difficulty 0.8, where 74% of the variance sits in
   4th- and 5th-order interactions over 3 125 cells, LightGBM is at 0.63 and
   still gaining 0.15 per decade; the MLP has barely left chance.
-  <!-- 1M -->
+  A separate 1.1M-row version of the same dataset
+  (`deep_interaction_d0.8_1M/`) confirms the trend: LightGBM goes from
+  0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s fit on 4 cores)
+  against a Bayes accuracy of 0.83, so a further decade of data is still
+  worth about 0.1 accuracy.
   This is the family that models "more rows keep helping": an in-context
   learner that cannot see beyond its context is capped where the learning
   curve crosses the context size.
