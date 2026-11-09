@@ -10,8 +10,9 @@ seen during pre-training:
 * 2 to 100 features, 400 to about 60 000 rows per table, at most 10 classes;
 * categorical features with mostly 2 to 9 levels (at most 200);
 * IID rows: no time order, no entities/groups shared between rows;
-* fairly smooth target functions (random MLPs with small depth, shallow
-  tree ensembles, GP-like functions), additive Gaussian noise of std <= 0.3;
+* target functions from random graph SCMs with eight function types
+  (MLP, GP, tree ensembles, discretisation, ...) spanning several
+  smoothness levels; noise enters through unobserved node dimensions;
 * features are standardised and clipped at 4 standard deviations at inference.
 
 BeyondArena ("Beyond IID: How General Are Tabular Foundation Models,

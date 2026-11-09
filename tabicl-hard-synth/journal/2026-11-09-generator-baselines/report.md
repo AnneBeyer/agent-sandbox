@@ -23,7 +23,7 @@ a concrete picture of the data the model has seen:
 | classes | at most 10 | many-class tasks |
 | categorical levels | mostly 2 to 9, at most 200 | high-cardinality ids, free text |
 | row structure | IID rows | temporal splits, grouped (unseen-entity) splits |
-| target functions | random MLP/tree/graph SCMs, smooth, noise std <= 0.3 | irregular, high-frequency, deep interactions |
+| target functions | random graph SCMs with 8 function types (MLP, GP, tree, discretisation, ...) chosen to span smoothness levels; noise only through unobserved node dimensions | irregular, high-frequency, deep interactions |
 | feature scale | standardised, clipped at 4 std at inference | heavy tails, outliers |
 
 BeyondArena (arXiv:2606.30410; 142 datasets, 11 models, Elo calibrated so
