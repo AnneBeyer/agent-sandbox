@@ -46,10 +46,18 @@ pixi run evaluate --data data/deep_interaction_d0.8 --out results/deep_interacti
 # a whole grid (see suite.yaml): smoke = 300k rows, full = 10M rows
 pixi run suite --grid smoke --data-dir data --evaluate --out results/smoke
 
-# TabICL zero-shot and fine-tuned (needs a GPU and the Hugging Face checkpoint)
+# TabICL zero-shot and fine-tuned (GPU recommended; downloads the Hugging Face checkpoint)
 pixi run -e tabicl evaluate --data data/deep_interaction_d0.8 --out results/ft \
     --models lgbm tabicl tabicl-ft --train-sizes 10000 100000 1000000 --tabicl-max-context 100000
+
+# on a CPU with little memory: fewer ensemble members, one per forward pass, chunked prediction
+pixi run -e tabicl evaluate --data data/prior_like_d0.3 --out results/cpu --models tabicl \
+    --train-sizes 1000 10000 --test-rows 5000 --device cpu \
+    --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append
 ```
+
+`--append` merges new model rows into an existing `results.json`; `--drop-columns group_id`
+hides a column from every model (BeyondArena drops the group index for grouped data).
 
 `data/` is git-ignored; 10M rows x 30 features take about 25 s to generate
 and 1.3 GB on disk.

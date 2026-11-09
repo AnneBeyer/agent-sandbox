@@ -207,7 +207,11 @@ def evaluate(args) -> dict:
         new_keys = {(r["model"], r["n_train"]) for r in records}
         kept = [r for r in old["records"] if (r["model"], r["n_train"]) not in new_keys]
         result["records"] = kept + records
-        result["n_test"] = {"previous": old.get("n_test"), "this_run": int(len(test))}
+        old_n = old.get("n_test")
+        old_n = old_n.get("previous", old_n) if isinstance(old_n, dict) else old_n
+        if old_n and old_n >= len(test):  # keep the Bayes reference of the larger test sample
+            result["bayes"] = old["bayes"]
+        result["n_test"] = {"previous": old_n, "this_run": int(len(test))}
         result["commands"] = old.get("commands", [old.get("command")]) + [result["command"]]
     out_file.write_text(json.dumps(result, indent=2))
     plot_learning_curve(result, args.out / "learning_curve.svg")

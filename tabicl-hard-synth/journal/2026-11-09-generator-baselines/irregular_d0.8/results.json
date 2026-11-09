@@ -8,7 +8,7 @@
     "this_run": 5000
   },
   "bayes": {
-    "accuracy": 0.8408704996109009
+    "accuracy": 0.8417753603374958
   },
   "knobs": {
     "n_sinusoids": 8,

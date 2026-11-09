@@ -8,7 +8,7 @@
     "this_run": 5000
   },
   "bayes": {
-    "accuracy": 0.8307610154151917
+    "accuracy": 0.8322331247031689
   },
   "knobs": {
     "drift_amplitude_std": 0.6,
