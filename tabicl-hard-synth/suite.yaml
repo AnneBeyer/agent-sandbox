@@ -1,0 +1,62 @@
+# Dataset grids for hardsynth.  Keys mirror `python -m hardsynth.generate`.
+# difficulty in [0, 1]: 0 = inside the TabICL prior, 1 = far outside.
+defaults:
+  n_features: 30
+  n_classes: 3
+  label_noise: 0.3
+  imbalance: 0.0
+  seed: 0
+  task: classification
+
+grids:
+  # Quick CPU grid used for the first journal iteration (about 300k rows each).
+  smoke:
+    defaults: { n_samples: 300_000, test_size: 50_000, chunk_size: 100_000 }
+    datasets:
+      - { family: prior_like,        difficulty: 0.3 }
+      - { family: prior_like,        difficulty: 0.8 }
+      - { family: deep_interaction,  difficulty: 0.3 }
+      - { family: deep_interaction,  difficulty: 0.8 }
+      - { family: high_cardinality,  difficulty: 0.3 }
+      - { family: high_cardinality,  difficulty: 0.8 }
+      - { family: many_classes,      difficulty: 0.3 }
+      - { family: many_classes,      difficulty: 0.6 }
+      - { family: high_dimensional,  difficulty: 0.3 }
+      - { family: high_dimensional,  difficulty: 0.6 }
+      - { family: temporal_drift,    difficulty: 0.3 }
+      - { family: temporal_drift,    difficulty: 0.8 }
+      - { family: grouped_entities,  difficulty: 0.3 }
+      - { family: grouped_entities,  difficulty: 0.8 }
+      - { family: irregular,         difficulty: 0.3 }
+      - { family: irregular,         difficulty: 0.8 }
+
+  # Full grid for the fine-tuning study: 10M rows (1M for the wide family),
+  # three difficulties per family, regression twins for the latent families.
+  full:
+    defaults: { n_samples: 10_000_000, test_size: 200_000 }
+    datasets:
+      - { family: prior_like,        difficulty: 0.5 }
+      - { family: deep_interaction,  difficulty: 0.4 }
+      - { family: deep_interaction,  difficulty: 0.7 }
+      - { family: deep_interaction,  difficulty: 1.0 }
+      - { family: deep_interaction,  difficulty: 0.7, task: regression, name: deep_interaction_d0.7_reg }
+      - { family: high_cardinality,  difficulty: 0.4 }
+      - { family: high_cardinality,  difficulty: 0.7 }
+      - { family: high_cardinality,  difficulty: 1.0 }
+      - { family: many_classes,      difficulty: 0.4 }
+      - { family: many_classes,      difficulty: 0.7 }
+      - { family: many_classes,      difficulty: 1.0 }
+      - { family: high_dimensional,  difficulty: 0.4, n_samples: 1_000_000 }
+      - { family: high_dimensional,  difficulty: 0.7, n_samples: 1_000_000 }
+      - { family: high_dimensional,  difficulty: 1.0, n_samples: 500_000 }
+      - { family: temporal_drift,    difficulty: 0.4 }
+      - { family: temporal_drift,    difficulty: 0.7 }
+      - { family: temporal_drift,    difficulty: 1.0 }
+      - { family: temporal_drift,    difficulty: 0.7, task: regression, name: temporal_drift_d0.7_reg }
+      - { family: grouped_entities,  difficulty: 0.4 }
+      - { family: grouped_entities,  difficulty: 0.7 }
+      - { family: grouped_entities,  difficulty: 1.0 }
+      - { family: irregular,         difficulty: 0.4 }
+      - { family: irregular,         difficulty: 0.7 }
+      - { family: irregular,         difficulty: 1.0 }
+      - { family: irregular,         difficulty: 0.7, task: regression, name: irregular_d0.7_reg }

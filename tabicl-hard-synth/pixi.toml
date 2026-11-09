@@ -1,0 +1,30 @@
+# Environment for the tabicl-hard-synth experiment.
+# Baseline environment: data generation plus tree/MLP baselines (CPU).
+# `pixi run -e tabicl ...` adds TabICL (PyTorch) for the fine-tuning follow-up.
+[workspace]
+name = "tabicl-hard-synth"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.12,<3.13"
+numpy = ">=2.0"
+pandas = ">=2.2"
+pyarrow = ">=17"
+scikit-learn = ">=1.5"
+lightgbm = ">=4.5"
+matplotlib = ">=3.9"
+pyyaml = ">=6"
+
+[feature.tabicl.pypi-dependencies]
+tabicl = { version = ">=2.2.0", extras = ["finetune"] }
+
+[environments]
+default = { solve-group = "base" }
+tabicl = { features = ["tabicl"], solve-group = "base" }
+
+[tasks]
+generate = "python -m hardsynth.generate"
+evaluate = "python -m hardsynth.evaluate"
+suite = "python -m hardsynth.suite"
+test = "python -m unittest discover -s tests -v"
