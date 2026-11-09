@@ -496,11 +496,14 @@ training subset, categoricals handled natively.</li>
 target-encoded.</li>
 <li>linear: logistic regression on the same preprocessing.</li>
 </ul>
-<p>TabICL could not be run in this session: the checkpoint lives on
-Hugging Face, which this cloud environment cannot reach. The
-<code>tabicl</code> pixi environment and the <code>tabicl</code> /
-<code>tabicl-ft</code> model names in <code>hardsynth.evaluate</code>
-are in place for the GPU follow-up.</p>
+<p>TabICL (zero-shot in-context learning, checkpoint
+<code>tabicl-classifier-v2-20260212</code>, package 2.2.0) was run on
+the CPU of the same VM after the Hugging Face hosts were allowed: 4
+ensemble members instead of the default 8, one member per forward pass,
+contexts of 1k and 10k rows, 5 000 test rows (the two wide datasets only
+at 1k context). A 10k context takes about 7 minutes per dataset on 4
+cores, so 100k contexts and fine-tuning are left to the GPU
+follow-up.</p>
 <p>Hardware: 4 vCPU cloud VM, 15 GB RAM, Linux; Python 3.12, numpy
 2.5.3, scikit-learn and LightGBM from conda-forge (exact versions in
 each <code>results.json</code>).</p>
@@ -513,8 +516,9 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="
 <p>Best test accuracy per model over the three training sizes; in
 brackets the change from 10k to 100k training rows (the "does more data
 still help" signal). Bayes is the accuracy of the true posterior on the
-same test rows. With 50 000 test rows the standard error of an accuracy
-is about 0.002.</p>
+test split. With 50 000 test rows the standard error of an accuracy is
+about 0.002; the TabICL numbers use a 5 000-row subsample of the same
+split (standard error about 0.007).</p>
 <table>
 <thead>
 <tr>
@@ -730,15 +734,262 @@ alt="Learning curves of all 16 datasets" /></p>
 <p>Per-dataset plots and raw numbers are in
 <code>&lt;dataset&gt;/learning_curve.svg</code> and
 <code>&lt;dataset&gt;/results.json</code>.</p>
+<h3
+id="tabicl-zero-shot-against-the-baselines-at-equal-and-unequal-data">TabICL
+zero-shot against the baselines at equal and unequal data</h3>
+<p>Accuracy at 1k and 10k training rows for TabICL, LightGBM and the
+MLP, then the best baseline at 100k rows, and TabICL's predict time for
+5 000 test rows with a 10k context on 4 CPU cores. Bold marks the best
+model at 10k rows.</p>
+<table>
+<thead>
+<tr>
+<th>dataset</th>
+<th>Bayes</th>
+<th>TabICL 1k</th>
+<th>LightGBM 1k</th>
+<th>MLP 1k</th>
+<th>TabICL 10k</th>
+<th>LightGBM 10k</th>
+<th>MLP 10k</th>
+<th>best baseline 100k</th>
+<th>TabICL s/5k rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prior_like_d0.3</td>
+<td>0.802</td>
+<td>0.667</td>
+<td>0.582</td>
+<td>0.644</td>
+<td><strong>0.688</strong></td>
+<td>0.655</td>
+<td>0.668</td>
+<td>0.730 (MLP)</td>
+<td>433</td>
+</tr>
+<tr>
+<td>prior_like_d0.8</td>
+<td>0.635</td>
+<td>0.570</td>
+<td>0.505</td>
+<td>0.545</td>
+<td><strong>0.595</strong></td>
+<td>0.557</td>
+<td>0.567</td>
+<td>0.591 (MLP)</td>
+<td>429</td>
+</tr>
+<tr>
+<td>deep_interaction_d0.3</td>
+<td>0.840</td>
+<td>0.790</td>
+<td>0.754</td>
+<td>0.398</td>
+<td>0.819</td>
+<td><strong>0.822</strong></td>
+<td>0.498</td>
+<td>0.832 (LightGBM)</td>
+<td>428</td>
+</tr>
+<tr>
+<td>deep_interaction_d0.8</td>
+<td>0.829</td>
+<td>0.424</td>
+<td>0.359</td>
+<td>0.353</td>
+<td><strong>0.549</strong></td>
+<td>0.482</td>
+<td>0.377</td>
+<td>0.628 (LightGBM); 0.741 at 1M</td>
+<td>434</td>
+</tr>
+<tr>
+<td>irregular_d0.3</td>
+<td>0.837</td>
+<td>0.424</td>
+<td>0.339</td>
+<td>0.329</td>
+<td><strong>0.530</strong></td>
+<td>0.492</td>
+<td>0.333</td>
+<td>0.584 (LightGBM)</td>
+<td>417</td>
+</tr>
+<tr>
+<td>irregular_d0.8</td>
+<td>0.842</td>
+<td>0.345</td>
+<td>0.334</td>
+<td>0.337</td>
+<td>0.329</td>
+<td>0.335</td>
+<td>0.333</td>
+<td>0.402 (LightGBM)</td>
+<td>419</td>
+</tr>
+<tr>
+<td>high_cardinality_d0.3</td>
+<td>0.833</td>
+<td>0.593</td>
+<td>0.535</td>
+<td>0.546</td>
+<td>0.645</td>
+<td>0.709</td>
+<td><strong>0.718</strong></td>
+<td>0.772 (LightGBM)</td>
+<td>421</td>
+</tr>
+<tr>
+<td>high_cardinality_d0.8</td>
+<td>0.831</td>
+<td>0.466</td>
+<td>0.451</td>
+<td>0.434</td>
+<td>0.511</td>
+<td><strong>0.544</strong></td>
+<td>0.517</td>
+<td>0.624 (LightGBM)</td>
+<td>410</td>
+</tr>
+<tr>
+<td>high_dimensional_d0.3</td>
+<td>0.826</td>
+<td>0.675</td>
+<td>0.641</td>
+<td>0.544</td>
+<td>not run</td>
+<td><strong>0.713</strong></td>
+<td>0.631</td>
+<td>0.792 (LightGBM)</td>
+<td>263 (1k context)</td>
+</tr>
+<tr>
+<td>high_dimensional_d0.6</td>
+<td>0.826</td>
+<td>0.626</td>
+<td>0.634</td>
+<td>0.536</td>
+<td>not run</td>
+<td><strong>0.706</strong></td>
+<td>0.601</td>
+<td>0.787 (LightGBM)</td>
+<td>804 (1k context)</td>
+</tr>
+<tr>
+<td>many_classes_d0.3</td>
+<td>0.749</td>
+<td>0.665</td>
+<td>0.619</td>
+<td>0.621</td>
+<td><strong>0.722</strong></td>
+<td>0.693</td>
+<td>0.698</td>
+<td>0.731 (MLP)</td>
+<td>580</td>
+</tr>
+<tr>
+<td>many_classes_d0.6</td>
+<td>0.750</td>
+<td>0.582</td>
+<td>0.462</td>
+<td>0.526</td>
+<td><strong>0.704</strong></td>
+<td>0.646</td>
+<td>0.667</td>
+<td>0.723 (MLP)</td>
+<td>690</td>
+</tr>
+<tr>
+<td>temporal_drift_d0.3</td>
+<td>0.832</td>
+<td>0.675</td>
+<td>0.546</td>
+<td>0.633</td>
+<td><strong>0.681</strong></td>
+<td>0.634</td>
+<td>0.664</td>
+<td>0.743 (MLP)</td>
+<td>404</td>
+</tr>
+<tr>
+<td>temporal_drift_d0.8</td>
+<td>0.804</td>
+<td>0.366</td>
+<td>0.383</td>
+<td>0.406</td>
+<td>0.404</td>
+<td><strong>0.489</strong></td>
+<td>0.478</td>
+<td>0.521 (LightGBM)</td>
+<td>415</td>
+</tr>
+<tr>
+<td>grouped_entities_d0.3</td>
+<td>0.767</td>
+<td>0.529</td>
+<td>0.483</td>
+<td>0.488</td>
+<td>0.550</td>
+<td>0.572</td>
+<td><strong>0.684</strong></td>
+<td>0.705 (MLP)</td>
+<td>403</td>
+</tr>
+<tr>
+<td>grouped_entities_d0.8</td>
+<td>0.622</td>
+<td>0.471</td>
+<td>0.407</td>
+<td>0.465</td>
+<td>0.443</td>
+<td>0.496</td>
+<td><strong>0.548</strong></td>
+<td>0.567 (MLP)</td>
+<td>412</td>
+</tr>
+</tbody>
+</table>
+<p>Three things stand out.</p>
+<ol type="1">
+<li><strong>At equal rows TabICL is the most sample-efficient model on
+most families.</strong> With 10k rows it is best or tied on 9 of 14
+datasets, including the hard deep-interaction and irregular targets
+where it is 0.04 to 0.07 ahead of LightGBM. It loses at equal rows
+exactly where BeyondArena's regression found the significant effects and
+where its preprocessing is weak: grouped entities (0.13 and 0.10 behind
+the target-encoding MLP; at difficulty 0.8 its accuracy even drops from
+1k to 10k context, the signature of memorising <code>group_id</code>),
+high-cardinality categoricals (0.07 and 0.03 behind LightGBM) and strong
+temporal drift (0.08 behind LightGBM).</li>
+<li><strong>A baseline with 10x more rows beats TabICL's 10k context on
+15 of 16 datasets</strong>; the exception, <code>prior_like_d0.8</code>,
+is a tie. The margin is largest where the learning curves are steep:
+0.08 on <code>deep_interaction_d0.8</code> (0.19 against LightGBM at 1M
+rows), 0.13 on <code>high_cardinality_d0.3</code>, 0.15 on
+<code>grouped_entities_d0.3</code>, 0.12 on
+<code>temporal_drift_d0.8</code>. TabICL's own 1k to 10k gain is 0.10 to
+0.12 on the deep-interaction, irregular and many-class datasets, so its
+curve is still rising where the context stops. This is the regime the
+fine-tuning study is about: the rows exist, the zero-shot model cannot
+consume them.</li>
+<li><strong>Cost.</strong> On 4 CPU cores TabICL needs about 400 s to
+predict 5 000 rows with a 10k context (600 to 700 s with 32 to 105
+classes, 800 s for the 794-column dataset at 1k context), against about
+3 s for LightGBM to fit and predict at 10k rows and 15 to 30 s at 100k.
+A GPU changes the absolute numbers by two orders of magnitude but not
+the comparison with a tree model fitted on ten times the data.</li>
+</ol>
 <h3 id="reading-the-curves">Reading the curves</h3>
 <ul>
 <li><strong>Control (<code>prior_like</code>)</strong>: all three models
 sit 0.05 to 0.11 below the Bayes line at 100k rows and gain only 0.02 to
 0.06 per decade. The random 3-layer tanh MLP latent is not trivial, but
-nothing here is outside the prior. This is the dataset on which
-zero-shot TabICL should be close to Bayes with a 50k context; if
-fine-tuning buys nothing here, the cost comparison has its
-baseline.</li>
+nothing here is outside the prior. Zero-shot TabICL is the best model at
+1k and 10k rows here (0.688 at 10k, Bayes 0.802), but the MLP overtakes
+it with 100k rows. If fine-tuning buys nothing on this family, the cost
+comparison has its baseline.</li>
 <li><strong><code>deep_interaction</code></strong>: at difficulty 0.3
 LightGBM reaches the Bayes line by 100k rows (0.832 vs 0.840) while the
 MLP jumps from 0.50 to 0.76 between 10k and 100k rows. At difficulty
@@ -749,38 +1000,43 @@ dataset (<code>deep_interaction_d0.8_1M/</code>) confirms the trend:
 LightGBM goes from 0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s
 fit on 4 cores) against a Bayes accuracy of 0.83, so a further decade of
 data is still worth about 0.1 accuracy. This is the family that models
-"more rows keep helping": an in-context learner that cannot see beyond
-its context is capped where the learning curve crosses the context
-size.</li>
+"more rows keep helping": TabICL is the most accurate model at 10k rows
+(0.549 vs 0.482) and is capped there, while LightGBM continues to 0.74
+at 1M rows.</li>
 <li><strong><code>irregular</code></strong>: the scikit-learn MLP and
 the linear model stay at chance (0.33) for every training size, LightGBM
 climbs to 0.58 (difficulty 0.3) and 0.40 (0.8) against a Bayes accuracy
 of 0.84. This is the Grinsztajn et al. regime: high-frequency targets
-favour trees over smooth function approximators, and the smooth TabICL
-prior is on the losing side. Difficulty 0.8 (8 cycles per standard
-deviation, 5-bit parity) is very hard for everything; difficulty 0.4 to
-0.6 is the informative range.</li>
+favour trees over smooth function approximators. Zero-shot TabICL does
+better than LightGBM at equal rows (0.530 vs 0.492 at 10k, difficulty
+0.3) but is at chance at difficulty 0.8 like everything else. Difficulty
+0.8 (8 cycles per standard deviation, 5-bit parity) is very hard for
+everything; difficulty 0.4 to 0.6 is the informative range.</li>
 <li><strong><code>high_cardinality</code></strong>: at difficulty 0.8 (5
 columns with 2 512 Zipf-distributed levels, strong pair effects) all
 models are at 0.60 to 0.62 against a Bayes accuracy of 0.83 and gain
 0.06 to 0.08 per decade. Target encoding makes even the linear model
 competitive because the level effects are additive; the hashed pair
-interaction is what separates the models with more data. For TabICL the
-question is whether the ordinal encoding of thousands of levels can be
-rescued by fine-tuning at all.</li>
+interaction is what separates the models with more data. TabICL, which
+ordinal-encodes the levels, is the weakest model at 10k rows on both
+difficulties; whether fine-tuning can rescue that encoding is an open
+question for the follow-up.</li>
 <li><strong><code>many_classes</code></strong>: 32 and 105 classes. The
 MLP is within 0.02 to 0.03 of Bayes, logistic regression within 0.05,
-LightGBM is worst and slowest (85 s for 105 classes at 100k rows). The
-baselines nearly solve this family, so if TabICL's hierarchical
-many-class mode is far behind, the fallback is cheap; a fine-tuning gain
-here must be large to matter.</li>
+LightGBM is worst and slowest (85 s for 105 classes at 100k rows).
+TabICL's hierarchical many-class mode is the best model at equal rows
+(0.704 at 10k with 105 classes vs 0.667 for the MLP) and within 0.05 of
+Bayes, so this family is less of a TFM weakness than expected; the MLP
+with 100k rows is still ahead.</li>
 <li><strong><code>high_dimensional</code></strong>: 282 and 794 columns
 with 20 informative ones. LightGBM is at 0.79 (Bayes 0.83), the MLP
 gains 0.13 per decade and is still rising. LightGBM took 112 s and 381 s
 per fit at 100k rows; the width, not the rows, drives cost here.</li>
 <li><strong><code>temporal_drift</code></strong>: at difficulty 0.8
 LightGBM and the MLP are at 0.52 against a Bayes accuracy of 0.80, and
-more rows from the same period add only 0.03 per decade. The test rows
+more rows from the same period add only 0.03 per decade. TabICL is the
+worst model under strong drift (0.404 at 10k rows), consistent with
+in-context learning weighting all context rows equally. The test rows
 live in a time regime that no model saw; extrapolation, not sample size,
 is the bottleneck. Longer histories (several generated datasets with
 different <code>n_samples</code>) are the right axis for the follow-up,
@@ -791,10 +1047,13 @@ MLP reaches 0.705 (Bayes 0.767) and LightGBM does not recover with more
 data. LightGBM's native handling of the 398-level <code>group_id</code>
 column lets it fit entity effects that do not transfer to the unseen
 test entities; scikit-learn's target encoder cross-fits and is immune.
-Any model that can memorise the id column, including an in-context
-learner, pays the same price. For a fair comparison in the next
-iteration, either drop <code>group_id</code> for all models or
-regularise LightGBM's categorical splits.</li>
+TabICL pays the same price: 0.55 and 0.44 at 10k rows, and at difficulty
+0.8 its accuracy falls when the context grows from 1k to 10k rows. This
+reproduces BeyondArena's finding that grouped splits are one of the two
+properties that significantly hurt TFMs, and its practice of dropping
+the group index. For a fair comparison in the next iteration, either
+drop <code>group_id</code> for all models or regularise LightGBM's
+categorical splits.</li>
 </ul>
 <h3 id="what-this-means-for-the-fine-tuning-study">What this means for
 the fine-tuning study</h3>
@@ -803,13 +1062,16 @@ the fine-tuning study</h3>
 <li><strong>Data-hungry but learnable</strong>
 (<code>deep_interaction</code>, <code>irregular</code>,
 <code>high_cardinality</code>, <code>high_dimensional</code>): learning
-curves keep rising past 100k rows. Zero-shot TabICL is capped by its
-context; fine-tuning can in principle use all rows. The decision
-variable is accuracy gained per GPU-hour relative to LightGBM at the
-same row count.</li>
+curves keep rising past 100k rows. Zero-shot TabICL is the most
+sample-efficient model at 10k rows on these families but is capped by
+its context, and the baselines with 100k rows are ahead by 0.05 to 0.19;
+fine-tuning can in principle use all rows. The decision variable is
+accuracy gained per GPU-hour relative to LightGBM at the same row
+count.</li>
 <li><strong>Shift-limited</strong> (<code>temporal_drift</code>,
 <code>grouped_entities</code>): the gap to Bayes is about extrapolation
 to unseen regimes or entities, and more rows barely help any model.
+Zero-shot TabICL is already the worst model here at equal rows.
 Fine-tuning on the training period is unlikely to close the gap; this is
 where "fall back to trees" is the expected answer, and the test is
 whether fine-tuning even hurts.</li>
@@ -822,17 +1084,17 @@ it.</li>
 <ul>
 <li>Run the <code>full</code> grid on a GPU host (10M rows per dataset,
 three difficulties per family, regression twins). Rows:
-<code>tabicl</code> zero-shot with contexts of 10k, 50k and 100k;
-<code>tabicl-ft</code> fine-tuned on 10k, 100k, 1M and 10M rows;
-LightGBM at the same sizes; wall-clock for every fit. The decision
-metric is the share of the gap to Bayes closed per unit of compute,
-against LightGBM as the fallback.</li>
+<code>tabicl</code> zero-shot with contexts of 10k, 50k and 100k (the
+CPU run stopped at 10k); <code>tabicl-ft</code> fine-tuned on 10k, 100k,
+1M and 10M rows; LightGBM at the same sizes; wall-clock for every fit.
+The decision metric is the share of the gap to Bayes closed per unit of
+compute, against LightGBM as the fallback.</li>
 <li>Replace the scikit-learn MLP by RealMLP or a PyTorch MLP trained for
 a fixed budget; the sklearn version stops too early on the irregular and
 deep-interaction families.</li>
-<li>Add a <code>--drop-columns group_id</code> option to the evaluation
-so the grouped family compares generalisation rather than
-memorisation.</li>
+<li>Use <code>--drop-columns group_id</code> (added) on the grouped
+family so that it compares generalisation rather than memorisation, as
+BeyondArena does.</li>
 <li>Report fit and predict time alongside accuracy (already stored in
 <code>results.json</code>).</li>
 </ul>
