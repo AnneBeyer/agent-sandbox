@@ -1,0 +1,121 @@
+{
+  "dataset": "data/many_classes_d0.6",
+  "family": "many_classes",
+  "difficulty": 0.6,
+  "task": "classification",
+  "n_test": 50000,
+  "bayes": {
+    "accuracy": 0.7502908706665039
+  },
+  "knobs": {
+    "n_classes": 105,
+    "latent_dim": 8,
+    "spread": 0.6348441719071859,
+    "n_noise_features": 10,
+    "class_scale_range": [
+      0.5827614622857745,
+      2.895405907101763
+    ]
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.46166,
+      "log_loss": 2.3567498427219995,
+      "roc_auc": 0.9405544983590193,
+      "fit_seconds": 9.86,
+      "predict_seconds": 15.07,
+      "n_trees": 72
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.52588,
+      "log_loss": 1.742592215538025,
+      "roc_auc": 0.9710262986348805,
+      "fit_seconds": 0.57,
+      "predict_seconds": 1.49
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.49026,
+      "log_loss": 1.9449834823608398,
+      "roc_auc": 0.9656015261542042,
+      "fit_seconds": 0.08,
+      "predict_seconds": 1.27
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.6457,
+      "log_loss": 1.53085371789199,
+      "roc_auc": 0.9685160549719654,
+      "fit_seconds": 33.32,
+      "predict_seconds": 18.01,
+      "n_trees": 78
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.66706,
+      "log_loss": 1.1788851022720337,
+      "roc_auc": 0.9842119811524288,
+      "fit_seconds": 2.15,
+      "predict_seconds": 1.53
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.67576,
+      "log_loss": 1.2039623260498047,
+      "roc_auc": 0.9835686538338348,
+      "fit_seconds": 1.41,
+      "predict_seconds": 1.38
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.68048,
+      "log_loss": 1.244334450361649,
+      "roc_auc": 0.9818759270056028,
+      "fit_seconds": 85.12,
+      "predict_seconds": 15.26,
+      "n_trees": 87
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.72314,
+      "log_loss": 0.9446640610694885,
+      "roc_auc": 0.9902320816216301,
+      "fit_seconds": 24.79,
+      "predict_seconds": 1.6
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.704,
+      "log_loss": 1.0904091596603394,
+      "roc_auc": 0.9858689059367145,
+      "fit_seconds": 16.01,
+      "predict_seconds": 1.07
+    }
+  ],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000 --only deep_interaction_d0.3 deep_interaction_d0.8 many_classes_d0.3 many_classes_d0.6"
+}

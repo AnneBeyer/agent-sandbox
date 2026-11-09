@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2026-11-09-generator-baselines</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+  :root { color-scheme: light dark; --ink: #1f2328; --muted: #59636e; --line: #d1d9e0; --paper: #ffffff; --code: #f6f8fa; --accent: #0969da; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e6edf3; --muted: #9198a1; --line: #3d444d; --paper: #0d1117; --code: #151b23; --accent: #4493f8; }
+  }
+  html { background: var(--paper); }
+  body { max-width: 920px; margin: 0 auto; padding: 1rem 1.25rem 3rem; color: var(--ink); background: var(--paper);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .journal-nav { padding: 0.5rem 0 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); color: var(--muted); }
+  h1, h2, h3 { line-height: 1.25; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; font-variant-numeric: tabular-nums; }
+  th, td { border: 1px solid var(--line); padding: 0.3rem 0.65rem; }
+  th { background: var(--code); }
+  code, pre { font: 0.9em/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code); }
+  code { padding: 0.1em 0.3em; border-radius: 4px; }
+  pre { padding: 0.8rem 1rem; overflow-x: auto; border-radius: 6px; }
+  pre code { padding: 0; background: none; }
+  img { max-width: 100%; height: auto; }
+  blockquote { margin-left: 0; padding-left: 1rem; border-left: 3px solid var(--line); color: var(--muted); }
+  math[display="block"] { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<header class="journal-nav"><a href="../index.html">&larr; tabicl-hard-synth journal</a></header>
+<table>
+<thead>
+<tr>
+<th>dataset</th>
+<th>family</th>
+<th>difficulty</th>
+<th>metric</th>
+<th>Bayes</th>
+<th>LightGBM</th>
+<th>MLP</th>
+<th>linear</th>
+<th>TabICL</th>
+<th>TabICL-ft</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deep_interaction_d0.3</td>
+<td>deep_interaction</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.840</td>
+<td>0.832 (+0.010 at 100,000)</td>
+<td>0.762 (+0.265 at 100,000)</td>
+<td>0.419 (-0.007 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>deep_interaction_d0.8</td>
+<td>deep_interaction</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.829</td>
+<td>0.628 (+0.146 at 100,000)</td>
+<td>0.408 (+0.030 at 100,000)</td>
+<td>0.390 (+0.007 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>grouped_entities_d0.3</td>
+<td>grouped_entities</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.767</td>
+<td>0.583 (+0.012 at 100,000)</td>
+<td>0.705 (+0.021 at 100,000)</td>
+<td>0.505 (-0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>grouped_entities_d0.8</td>
+<td>grouped_entities</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.622</td>
+<td>0.534 (+0.038 at 100,000)</td>
+<td>0.567 (+0.019 at 100,000)</td>
+<td>0.434 (-0.000 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_cardinality_d0.3</td>
+<td>high_cardinality</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.833</td>
+<td>0.772 (+0.063 at 100,000)</td>
+<td>0.769 (+0.051 at 100,000)</td>
+<td>0.767 (+0.023 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_cardinality_d0.8</td>
+<td>high_cardinality</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.831</td>
+<td>0.624 (+0.080 at 100,000)</td>
+<td>0.596 (+0.079 at 100,000)</td>
+<td>0.601 (+0.062 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_dimensional_d0.3</td>
+<td>high_dimensional</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.826</td>
+<td>0.792 (+0.079 at 100,000)</td>
+<td>0.759 (+0.128 at 100,000)</td>
+<td>0.659 (+0.019 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_dimensional_d0.6</td>
+<td>high_dimensional</td>
+<td>0.60</td>
+<td>accuracy</td>
+<td>0.826</td>
+<td>0.787 (+0.081 at 100,000)</td>
+<td>0.727 (+0.126 at 100,000)</td>
+<td>0.660 (+0.047 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>irregular_d0.3</td>
+<td>irregular</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.837</td>
+<td>0.584 (+0.092 at 100,000)</td>
+<td>0.333 (-0.000 at 100,000)</td>
+<td>0.335 (-0.005 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>irregular_d0.8</td>
+<td>irregular</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.842</td>
+<td>0.402 (+0.066 at 100,000)</td>
+<td>0.337 (+0.002 at 100,000)</td>
+<td>0.335 (+0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>many_classes_d0.3</td>
+<td>many_classes</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.749</td>
+<td>0.719 (+0.026 at 100,000)</td>
+<td>0.731 (+0.033 at 100,000)</td>
+<td>0.699 (+0.012 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>many_classes_d0.6</td>
+<td>many_classes</td>
+<td>0.60</td>
+<td>accuracy</td>
+<td>0.750</td>
+<td>0.680 (+0.035 at 100,000)</td>
+<td>0.723 (+0.056 at 100,000)</td>
+<td>0.704 (+0.028 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>prior_like_d0.3</td>
+<td>prior_like</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.802</td>
+<td>0.692 (+0.037 at 100,000)</td>
+<td>0.730 (+0.062 at 100,000)</td>
+<td>0.686 (+0.003 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>prior_like_d0.8</td>
+<td>prior_like</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.635</td>
+<td>0.581 (+0.023 at 100,000)</td>
+<td>0.591 (+0.024 at 100,000)</td>
+<td>0.582 (+0.005 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>temporal_drift_d0.3</td>
+<td>temporal_drift</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.832</td>
+<td>0.713 (+0.079 at 100,000)</td>
+<td>0.743 (+0.078 at 100,000)</td>
+<td>0.634 (-0.003 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>temporal_drift_d0.8</td>
+<td>temporal_drift</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.804</td>
+<td>0.521 (+0.032 at 100,000)</td>
+<td>0.505 (+0.026 at 100,000)</td>
+<td>0.387 (-0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{
+  "dataset": "data/deep_interaction_d0.8_1M",
+  "family": "deep_interaction",
+  "difficulty": 0.8,
+  "task": "classification",
+  "n_test": 50000,
+  "bayes": {
+    "accuracy": 0.8319559097290039
+  },
+  "knobs": {
+    "k_interacting": 5,
+    "bins": 5,
+    "order_decay": 1.35,
+    "n_cells_top_order": 3125,
+    "variance_share_by_order": {
+      "1": 0.043,
+      "2": 0.078,
+      "3": 0.143,
+      "4": 0.261,
+      "5": 0.475
+    }
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.39286,
+      "log_loss": 1.0916151763610507,
+      "roc_auc": 0.5644391173312777,
+      "fit_seconds": 0.21,
+      "predict_seconds": 0.07,
+      "n_trees": 3
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.48312,
+      "log_loss": 1.0130992341579645,
+      "roc_auc": 0.6682135963897432,
+      "fit_seconds": 0.99,
+      "predict_seconds": 0.3,
+      "n_trees": 64
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.62998,
+      "log_loss": 0.8487715799731488,
+      "roc_auc": 0.8079872884134515,
+      "fit_seconds": 14.26,
+      "predict_seconds": 2.17,
+      "n_trees": 520
+    },
+    {
+      "model": "lgbm",
+      "n_train": 1000000,
+      "accuracy": 0.74088,
+      "log_loss": 0.6986681232345301,
+      "roc_auc": 0.8904661236424093,
+      "fit_seconds": 93.15,
+      "predict_seconds": 3.4,
+      "n_trees": 1000
+    }
+  ],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/deep_interaction_d0.8_1M --out journal/2026-11-09-generator-baselines/deep_interaction_d0.8_1M --models lgbm --train-sizes 1000 10000 100000 1000000 --test-rows 50000"
+}

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Iteration 1: a generator for tables outside the TabICL prior,
+with CPU baselines</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+  :root { color-scheme: light dark; --ink: #1f2328; --muted: #59636e; --line: #d1d9e0; --paper: #ffffff; --code: #f6f8fa; --accent: #0969da; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e6edf3; --muted: #9198a1; --line: #3d444d; --paper: #0d1117; --code: #151b23; --accent: #4493f8; }
+  }
+  html { background: var(--paper); }
+  body { max-width: 920px; margin: 0 auto; padding: 1rem 1.25rem 3rem; color: var(--ink); background: var(--paper);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .journal-nav { padding: 0.5rem 0 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); color: var(--muted); }
+  h1, h2, h3 { line-height: 1.25; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; font-variant-numeric: tabular-nums; }
+  th, td { border: 1px solid var(--line); padding: 0.3rem 0.65rem; }
+  th { background: var(--code); }
+  code, pre { font: 0.9em/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code); }
+  code { padding: 0.1em 0.3em; border-radius: 4px; }
+  pre { padding: 0.8rem 1rem; overflow-x: auto; border-radius: 6px; }
+  pre code { padding: 0; background: none; }
+  img { max-width: 100%; height: auto; }
+  blockquote { margin-left: 0; padding-left: 1rem; border-left: 3px solid var(--line); color: var(--muted); }
+  math[display="block"] { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<header class="journal-nav"><a href="../index.html">&larr; tabicl-hard-synth journal</a></header>
+<h1
+id="iteration-1-a-generator-for-tables-outside-the-tabicl-prior-with-cpu-baselines">Iteration
+1: a generator for tables outside the TabICL prior, with CPU
+baselines</h1>
+<p>Date: 2026-11-09. Code: <code>tabicl-hard-synth/hardsynth/</code>.
+Grid: <code>suite.yaml</code>, <code>smoke</code>.</p>
+<h2 id="goal">Goal</h2>
+<p>Build synthetic tables (up to 10M rows) on which TabICL is expected
+to lose to gradient-boosted trees or an MLP, so that the next iterations
+can ask: at which data size, and how far from the pre-training prior,
+does fine-tuning TabICL pay for itself instead of falling back to
+LightGBM or an MLP?</p>
+<h2 id="what-outside-the-prior-means-here">What "outside the prior"
+means here</h2>
+<p>The released <code>tabicl</code> package (2.2.0) ships the
+pre-training prior (<code>tabicl.prior</code>). Reading its defaults and
+the TabICLv2 training recipe gives a concrete picture of the data the
+model has seen:</p>
+<table>
+<thead>
+<tr>
+<th>prior property</th>
+<th>TabICLv2 pre-training</th>
+<th>where real data leaves it (BeyondArena)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rows per table</td>
+<td>400 to about 60 000 (log-uniform in the last training stages)</td>
+<td>tables with &gt;= 100k rows, up to 1M</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>2 to 100</td>
+<td>up to 22k</td>
+</tr>
+<tr>
+<td>classes</td>
+<td>at most 10</td>
+<td>many-class tasks</td>
+</tr>
+<tr>
+<td>categorical levels</td>
+<td>mostly 2 to 9, at most 200</td>
+<td>high-cardinality ids, free text</td>
+</tr>
+<tr>
+<td>row structure</td>
+<td>IID rows</td>
+<td>temporal splits, grouped (unseen-entity) splits</td>
+</tr>
+<tr>
+<td>target functions</td>
+<td>random MLP/tree/graph SCMs, smooth, noise std &lt;= 0.3</td>
+<td>irregular, high-frequency, deep interactions</td>
+</tr>
+<tr>
+<td>feature scale</td>
+<td>standardised, clipped at 4 std at inference</td>
+<td>heavy tails, outliers</td>
+</tr>
+</tbody>
+</table>
+<p>BeyondArena (arXiv:2606.30410) reports that TabPFN-2.6 / TabICLv2 /
+TabDPT win on tiny-to-medium IID tables but are beaten by tuned XGBoost,
+CatBoost, LightGBM and RealMLP on the large (&gt;= 100k rows),
+high-dimensional, temporal and grouped subsets. The subsets overlap
+(large tables are over-represented among the temporal and
+high-dimensional ones), so the paper cannot say which axis causes the
+loss. A synthetic generator with one knob per axis can.</p>
+<h2 id="the-eight-families">The eight families</h2>
+<p>Each family has a single <code>difficulty</code> knob in [0, 1]. At 0
+the family is close to the prior; at 1 it is far outside. All families
+share <code>n_samples</code>, <code>n_features</code>,
+<code>task</code>, <code>n_classes</code>, <code>label_noise</code>,
+<code>imbalance</code> and <code>seed</code>.</p>
+<table>
+<thead>
+<tr>
+<th>family</th>
+<th>axis</th>
+<th>difficulty 0 -&gt; 1</th>
+<th>split</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prior_like</code></td>
+<td>control, inside the prior</td>
+<td>label noise std 0.1 -&gt; 1.0</td>
+<td>random</td>
+</tr>
+<tr>
+<td><code>deep_interaction</code></td>
+<td>large data / high-order interactions: target is a random lookup
+table over the joint discretisation of k features</td>
+<td>9 -&gt; 1.7M table cells; table weight 0.5 -&gt; 1.0</td>
+<td>random</td>
+</tr>
+<tr>
+<td><code>high_cardinality</code></td>
+<td>level-specific effects of Zipf-distributed categoricals plus a
+hashed pair interaction</td>
+<td>3 columns x 10 levels -&gt; 6 x 10 000 levels; pair weight 0 -&gt;
+1</td>
+<td>random</td>
+</tr>
+<tr>
+<td><code>many_classes</code></td>
+<td>Gaussian class clusters in an 8-d latent space, injective warp to 20
+observed features, noise features</td>
+<td>10 -&gt; 500 classes; Bayes accuracy calibrated to 0.75</td>
+<td>random</td>
+</tr>
+<tr>
+<td><code>high_dimensional</code></td>
+<td>20 informative columns under 16 random ReLU units and products; half
+the rest are low-rank confounders, half noise; Student-t marginals</td>
+<td>100 -&gt; about 3 000 columns; t(10) -&gt; t(2)</td>
+<td>random</td>
+</tr>
+<tr>
+<td><code>temporal_drift</code></td>
+<td>feature means drift along sine curves, the coefficient vector
+rotates with time, a seasonal term; <code>time</code> is a feature</td>
+<td>no drift -&gt; 2 std mean drift, 90 degree rotation, season weight
+1</td>
+<td>last rows</td>
+</tr>
+<tr>
+<td><code>grouped_entities</code></td>
+<td>rows belong to entities with observed covariates, individual x
+entity interactions and an unobserved entity effect;
+<code>group_id</code> is a feature</td>
+<td>100 -&gt; 10 000 training entities; unobserved effect std 0 -&gt;
+1</td>
+<td>unseen entities</td>
+</tr>
+<tr>
+<td><code>irregular</code></td>
+<td>sums of high-frequency sinusoids plus a parity (XOR) of sign
+bits</td>
+<td>0.5 -&gt; 8 cycles per std; parity of 2 -&gt; 6 bits, weight 0 -&gt;
+1</td>
+<td>random</td>
+</tr>
+</tbody>
+</table>
+<p>Every family exposes the Bayes-optimal reference per row:
+<code>_p_bayes</code>, the largest class posterior, for classification,
+and <code>_y_clean</code> = E[y | x] for regression. For the
+latent-threshold families the posterior is exact under the Gaussian
+label noise; for <code>many_classes</code> it is exact because the warp
+from latent to observed space is injective; for
+<code>grouped_entities</code> it is the unseen-entity oracle that does
+not know the entity's random effect. Learning curves can therefore be
+read as "distance to the ceiling", not only as "model A vs model B".</p>
+<h3
+id="why-these-should-be-hard-for-in-context-learning-but-not-for-trees">Why
+these should be hard for in-context learning but not for trees</h3>
+<ul>
+<li><code>deep_interaction</code>: with b^k independent cell values, a
+learner needs on the order of 10 x b^k rows to resolve the table. At
+difficulty 0.8 there are 78 125 cells, so accuracy keeps improving up to
+about 1M rows. An in-context learner sees at most its context (TabICL
+recommends &lt;= 100k rows, the pre-training prior never exceeded 60k);
+the rows beyond the context are simply unused unless the model is
+fine-tuned.</li>
+<li><code>high_cardinality</code>: TabICL ordinal-encodes categoricals
+and warns above 40 levels; the prior has at most 200 levels and
+typically &lt; 10. LightGBM handles the levels natively and the MLP uses
+target encoding.</li>
+<li><code>many_classes</code>: above 10 classes TabICL falls back to
+hierarchical classification over class subsets.</li>
+<li><code>high_dimensional</code> and <code>irregular</code>: the
+prior's functions are smooth tree/MLP/GP mixtures with &lt;= 100
+columns; heavy tails are clipped at 4 std, which destroys the signal in
+the tails.</li>
+<li><code>temporal_drift</code> and <code>grouped_entities</code>:
+in-context learning weights all context rows equally and has no notion
+of recency or of an entity; trees split on <code>time</code> and MLPs
+extrapolate the smooth drift at least locally. These two families also
+test memorisation: the <code>group_id</code> column lets a model fit
+entity effects that do not transfer to unseen entities.</li>
+</ul>
+<h2 id="generation-cost">Generation cost</h2>
+<p><code>python -m hardsynth.generate --family deep_interaction --difficulty 0.8 --n-samples 10_000_000 --test-size 200_000 --n-classes 3</code>:
+10M rows x 30 features in 22 s on this 4-core cloud VM (numpy 2.5.3,
+pyarrow, zstd Parquet), 1.3 GB on disk, chunks of 1M rows so peak memory
+stays below 1 GB. The wide family is the exception: 10M x 3 000 float32
+would be 120 GB, so the <code>full</code> grid caps it at 0.5M to 1M
+rows.</p>
+<h2 id="baselines-on-the-smoke-grid-300k-rows-cpu">Baselines on the
+smoke grid (300k rows, CPU)</h2>
+<p>Setup: every family at two difficulties (<code>suite.yaml</code>,
+grid <code>smoke</code>), 300 000 rows of which the last 50 000 are the
+test split, 3 classes, label noise 0.3, seed 0. Learning curves over
+random training subsets of 1k, 10k and 100k rows. Models with their
+default-ish settings, no tuning:</p>
+<ul>
+<li>LightGBM 4.x: 1000 trees, learning rate 0.05, 63 leaves, 80%
+row/column subsampling, early stopping (50 rounds) on 10% of the
+training subset, categoricals handled natively.</li>
+<li>MLP: scikit-learn <code>MLPClassifier</code>, two hidden layers of
+256, Adam, early stopping; numerics standardised, categoricals
+target-encoded.</li>
+<li>linear: logistic regression on the same preprocessing.</li>
+</ul>
+<p>TabICL could not be run in this session: the checkpoint lives on
+Hugging Face, which this cloud environment cannot reach. The
+<code>tabicl</code> pixi environment and the <code>tabicl</code> /
+<code>tabicl-ft</code> model names in <code>hardsynth.evaluate</code>
+are in place for the GPU follow-up.</p>
+<p>Hardware: 4 vCPU cloud VM, 15 GB RAM, Linux; Python 3.12, numpy
+2.5.3, scikit-learn and LightGBM from conda-forge (exact versions in
+each <code>results.json</code>).</p>
+<p>Command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> run suite <span class="at">--grid</span> smoke <span class="at">--data-dir</span> data <span class="at">--evaluate</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out</span> journal/2026-11-09-generator-baselines <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--models</span> lgbm mlp linear <span class="at">--train-sizes</span> 1000 10000 100000 <span class="at">--test-rows</span> 50000</span></code></pre></div>
+<h3 id="results">Results</h3>
+<p>Best test accuracy per model over the three training sizes; in
+brackets the change from 10k to 100k training rows (the "does more data
+still help" signal). Bayes is the accuracy of the true posterior on the
+same test rows. With 50 000 test rows the standard error of an accuracy
+is about 0.002.</p>
+<table>
+<thead>
+<tr>
+<th>dataset</th>
+<th>family</th>
+<th>difficulty</th>
+<th>metric</th>
+<th>Bayes</th>
+<th>LightGBM</th>
+<th>MLP</th>
+<th>linear</th>
+<th>TabICL</th>
+<th>TabICL-ft</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deep_interaction_d0.3</td>
+<td>deep_interaction</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.840</td>
+<td>0.832 (+0.010 at 100,000)</td>
+<td>0.762 (+0.265 at 100,000)</td>
+<td>0.419 (-0.007 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>deep_interaction_d0.8</td>
+<td>deep_interaction</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.829</td>
+<td>0.628 (+0.146 at 100,000)</td>
+<td>0.408 (+0.030 at 100,000)</td>
+<td>0.390 (+0.007 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>grouped_entities_d0.3</td>
+<td>grouped_entities</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.767</td>
+<td>0.583 (+0.012 at 100,000)</td>
+<td>0.705 (+0.021 at 100,000)</td>
+<td>0.505 (-0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>grouped_entities_d0.8</td>
+<td>grouped_entities</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.622</td>
+<td>0.534 (+0.038 at 100,000)</td>
+<td>0.567 (+0.019 at 100,000)</td>
+<td>0.434 (-0.000 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_cardinality_d0.3</td>
+<td>high_cardinality</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.833</td>
+<td>0.772 (+0.063 at 100,000)</td>
+<td>0.769 (+0.051 at 100,000)</td>
+<td>0.767 (+0.023 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_cardinality_d0.8</td>
+<td>high_cardinality</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.831</td>
+<td>0.624 (+0.080 at 100,000)</td>
+<td>0.596 (+0.079 at 100,000)</td>
+<td>0.601 (+0.062 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_dimensional_d0.3</td>
+<td>high_dimensional</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.826</td>
+<td>0.792 (+0.079 at 100,000)</td>
+<td>0.759 (+0.128 at 100,000)</td>
+<td>0.659 (+0.019 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>high_dimensional_d0.6</td>
+<td>high_dimensional</td>
+<td>0.60</td>
+<td>accuracy</td>
+<td>0.826</td>
+<td>0.787 (+0.081 at 100,000)</td>
+<td>0.727 (+0.126 at 100,000)</td>
+<td>0.660 (+0.047 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>irregular_d0.3</td>
+<td>irregular</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.837</td>
+<td>0.584 (+0.092 at 100,000)</td>
+<td>0.333 (-0.000 at 100,000)</td>
+<td>0.335 (-0.005 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>irregular_d0.8</td>
+<td>irregular</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.842</td>
+<td>0.402 (+0.066 at 100,000)</td>
+<td>0.337 (+0.002 at 100,000)</td>
+<td>0.335 (+0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>many_classes_d0.3</td>
+<td>many_classes</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.749</td>
+<td>0.719 (+0.026 at 100,000)</td>
+<td>0.731 (+0.033 at 100,000)</td>
+<td>0.699 (+0.012 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>many_classes_d0.6</td>
+<td>many_classes</td>
+<td>0.60</td>
+<td>accuracy</td>
+<td>0.750</td>
+<td>0.680 (+0.035 at 100,000)</td>
+<td>0.723 (+0.056 at 100,000)</td>
+<td>0.704 (+0.028 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>prior_like_d0.3</td>
+<td>prior_like</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.802</td>
+<td>0.692 (+0.037 at 100,000)</td>
+<td>0.730 (+0.062 at 100,000)</td>
+<td>0.686 (+0.003 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>prior_like_d0.8</td>
+<td>prior_like</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.635</td>
+<td>0.581 (+0.023 at 100,000)</td>
+<td>0.591 (+0.024 at 100,000)</td>
+<td>0.582 (+0.005 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>temporal_drift_d0.3</td>
+<td>temporal_drift</td>
+<td>0.30</td>
+<td>accuracy</td>
+<td>0.832</td>
+<td>0.713 (+0.079 at 100,000)</td>
+<td>0.743 (+0.078 at 100,000)</td>
+<td>0.634 (-0.003 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>temporal_drift_d0.8</td>
+<td>temporal_drift</td>
+<td>0.80</td>
+<td>accuracy</td>
+<td>0.804</td>
+<td>0.521 (+0.032 at 100,000)</td>
+<td>0.505 (+0.026 at 100,000)</td>
+<td>0.387 (-0.001 at 100,000)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><img src="learning_curves_grid.svg"
+alt="Learning curves of all 16 datasets" /></p>
+<p>Per-dataset plots and raw numbers are in
+<code>&lt;dataset&gt;/learning_curve.svg</code> and
+<code>&lt;dataset&gt;/results.json</code>.</p>
+<h3 id="reading-the-curves">Reading the curves</h3>
+<ul>
+<li><strong>Control (<code>prior_like</code>)</strong>: all three models
+sit 0.05 to 0.11 below the Bayes line at 100k rows and gain only 0.02 to
+0.06 per decade. The random 3-layer tanh MLP latent is not trivial, but
+nothing here is outside the prior. This is the dataset on which
+zero-shot TabICL should be close to Bayes with a 50k context; if
+fine-tuning buys nothing here, the cost comparison has its
+baseline.</li>
+<li><strong><code>deep_interaction</code></strong>: at difficulty 0.3
+LightGBM reaches the Bayes line by 100k rows (0.832 vs 0.840) while the
+MLP jumps from 0.50 to 0.76 between 10k and 100k rows. At difficulty
+0.8, where 74% of the variance sits in 4th- and 5th-order interactions
+over 3 125 cells, LightGBM is at 0.63 and still gaining 0.15 per decade;
+the MLP has barely left chance. A separate 1.1M-row version of the same
+dataset (<code>deep_interaction_d0.8_1M/</code>) confirms the trend:
+LightGBM goes from 0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s
+fit on 4 cores) against a Bayes accuracy of 0.83, so a further decade of
+data is still worth about 0.1 accuracy. This is the family that models
+"more rows keep helping": an in-context learner that cannot see beyond
+its context is capped where the learning curve crosses the context
+size.</li>
+<li><strong><code>irregular</code></strong>: the scikit-learn MLP and
+the linear model stay at chance (0.33) for every training size, LightGBM
+climbs to 0.58 (difficulty 0.3) and 0.40 (0.8) against a Bayes accuracy
+of 0.84. This is the Grinsztajn et al. regime: high-frequency targets
+favour trees over smooth function approximators, and the smooth TabICL
+prior is on the losing side. Difficulty 0.8 (8 cycles per standard
+deviation, 5-bit parity) is very hard for everything; difficulty 0.4 to
+0.6 is the informative range.</li>
+<li><strong><code>high_cardinality</code></strong>: at difficulty 0.8 (5
+columns with 2 512 Zipf-distributed levels, strong pair effects) all
+models are at 0.60 to 0.62 against a Bayes accuracy of 0.83 and gain
+0.06 to 0.08 per decade. Target encoding makes even the linear model
+competitive because the level effects are additive; the hashed pair
+interaction is what separates the models with more data. For TabICL the
+question is whether the ordinal encoding of thousands of levels can be
+rescued by fine-tuning at all.</li>
+<li><strong><code>many_classes</code></strong>: 32 and 105 classes. The
+MLP is within 0.02 to 0.03 of Bayes, logistic regression within 0.05,
+LightGBM is worst and slowest (85 s for 105 classes at 100k rows). The
+baselines nearly solve this family, so if TabICL's hierarchical
+many-class mode is far behind, the fallback is cheap; a fine-tuning gain
+here must be large to matter.</li>
+<li><strong><code>high_dimensional</code></strong>: 282 and 794 columns
+with 20 informative ones. LightGBM is at 0.79 (Bayes 0.83), the MLP
+gains 0.13 per decade and is still rising. LightGBM took 112 s and 381 s
+per fit at 100k rows; the width, not the rows, drives cost here.</li>
+<li><strong><code>temporal_drift</code></strong>: at difficulty 0.8
+LightGBM and the MLP are at 0.52 against a Bayes accuracy of 0.80, and
+more rows from the same period add only 0.03 per decade. The test rows
+live in a time regime that no model saw; extrapolation, not sample size,
+is the bottleneck. Longer histories (several generated datasets with
+different <code>n_samples</code>) are the right axis for the follow-up,
+not denser sampling.</li>
+<li><strong><code>grouped_entities</code></strong>: an unexpected but
+useful finding. At difficulty 0.3 LightGBM is stuck at 0.58 while the
+MLP reaches 0.705 (Bayes 0.767) and LightGBM does not recover with more
+data. LightGBM's native handling of the 398-level <code>group_id</code>
+column lets it fit entity effects that do not transfer to the unseen
+test entities; scikit-learn's target encoder cross-fits and is immune.
+Any model that can memorise the id column, including an in-context
+learner, pays the same price. For a fair comparison in the next
+iteration, either drop <code>group_id</code> for all models or
+regularise LightGBM's categorical splits.</li>
+</ul>
+<h3 id="what-this-means-for-the-fine-tuning-study">What this means for
+the fine-tuning study</h3>
+<p>The grid gives three kinds of datasets:</p>
+<ol type="1">
+<li><strong>Data-hungry but learnable</strong>
+(<code>deep_interaction</code>, <code>irregular</code>,
+<code>high_cardinality</code>, <code>high_dimensional</code>): learning
+curves keep rising past 100k rows. Zero-shot TabICL is capped by its
+context; fine-tuning can in principle use all rows. The decision
+variable is accuracy gained per GPU-hour relative to LightGBM at the
+same row count.</li>
+<li><strong>Shift-limited</strong> (<code>temporal_drift</code>,
+<code>grouped_entities</code>): the gap to Bayes is about extrapolation
+to unseen regimes or entities, and more rows barely help any model.
+Fine-tuning on the training period is unlikely to close the gap; this is
+where "fall back to trees" is the expected answer, and the test is
+whether fine-tuning even hurts.</li>
+<li><strong>Nearly solved by baselines</strong>
+(<code>many_classes</code>, <code>prior_like</code>): the margin for
+improvement is small, so fine-tuning has to be almost free to be worth
+it.</li>
+</ol>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li>Run the <code>full</code> grid on a GPU host (10M rows per dataset,
+three difficulties per family, regression twins). Rows:
+<code>tabicl</code> zero-shot with contexts of 10k, 50k and 100k;
+<code>tabicl-ft</code> fine-tuned on 10k, 100k, 1M and 10M rows;
+LightGBM at the same sizes; wall-clock for every fit. The decision
+metric is the share of the gap to Bayes closed per unit of compute,
+against LightGBM as the fallback.</li>
+<li>Replace the scikit-learn MLP by RealMLP or a PyTorch MLP trained for
+a fixed budget; the sklearn version stops too early on the irregular and
+deep-interaction families.</li>
+<li>Add a <code>--drop-columns group_id</code> option to the evaluation
+so the grouped family compares generalisation rather than
+memorisation.</li>
+<li>Report fit and predict time alongside accuracy (already stored in
+<code>results.json</code>).</li>
+</ul>
+</body>
+</html>

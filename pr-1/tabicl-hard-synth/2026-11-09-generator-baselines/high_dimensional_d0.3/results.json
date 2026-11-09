@@ -1,0 +1,139 @@
+{
+  "dataset": "data/high_dimensional_d0.3",
+  "family": "high_dimensional",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": 50000,
+  "bayes": {
+    "accuracy": 0.8257079720497131
+  },
+  "knobs": {
+    "n_informative": 20,
+    "n_confounder": 131,
+    "n_noise": 131,
+    "student_t_df": 7.6,
+    "informative_columns": [
+      "f_127",
+      "f_266",
+      "f_83",
+      "f_156",
+      "f_253",
+      "f_272",
+      "f_159",
+      "f_64",
+      "f_166",
+      "f_68",
+      "f_232",
+      "f_183",
+      "f_245",
+      "f_62",
+      "f_277",
+      "f_108",
+      "f_271",
+      "f_203",
+      "f_270",
+      "f_55"
+    ]
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.64098,
+      "log_loss": 0.7522451725248114,
+      "roc_auc": 0.8222525836674413,
+      "fit_seconds": 1.79,
+      "predict_seconds": 0.32,
+      "n_trees": 75
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.54364,
+      "log_loss": 0.9551336765289307,
+      "roc_auc": 0.7286755393793962,
+      "fit_seconds": 0.26,
+      "predict_seconds": 0.25
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.53884,
+      "log_loss": 2.1852402687072754,
+      "roc_auc": 0.7290188017606966,
+      "fit_seconds": 0.05,
+      "predict_seconds": 0.14
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.71266,
+      "log_loss": 0.6156678297398179,
+      "roc_auc": 0.8770366567986491,
+      "fit_seconds": 13.52,
+      "predict_seconds": 0.98,
+      "n_trees": 208
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.631,
+      "log_loss": 0.8642590641975403,
+      "roc_auc": 0.8138014518611856,
+      "fit_seconds": 1.85,
+      "predict_seconds": 0.23
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.63978,
+      "log_loss": 0.774212121963501,
+      "roc_auc": 0.8150271975249147,
+      "fit_seconds": 0.11,
+      "predict_seconds": 0.12
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.79162,
+      "log_loss": 0.4561084655795917,
+      "roc_auc": 0.9299474833142187,
+      "fit_seconds": 111.77,
+      "predict_seconds": 5.27,
+      "n_trees": 1000
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.75948,
+      "log_loss": 0.5582082867622375,
+      "roc_auc": 0.9089516547252049,
+      "fit_seconds": 16.49,
+      "predict_seconds": 0.21
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.65862,
+      "log_loss": 0.7460084557533264,
+      "roc_auc": 0.8283971233015078,
+      "fit_seconds": 1.01,
+      "predict_seconds": 0.11
+    }
+  ],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000"
+}
