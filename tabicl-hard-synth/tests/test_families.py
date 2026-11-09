@@ -60,7 +60,7 @@ class FamilyContracts(unittest.TestCase):
     def test_difficulty_moves_the_knobs(self):
         easy = FAMILIES["deep_interaction"](**self._kwargs("deep_interaction", difficulty=0.0))
         hard = FAMILIES["deep_interaction"](**self._kwargs("deep_interaction", difficulty=1.0))
-        self.assertLess(easy.n_cells, hard.n_cells)
+        self.assertLess(easy.n_cells_top, hard.n_cells_top)
         self.assertGreater(FAMILIES["many_classes"](**self._kwargs("many_classes", difficulty=1.0)).n_classes, 100)
 
     def test_many_classes_bayes_calibrated(self):

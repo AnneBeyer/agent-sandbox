@@ -258,15 +258,19 @@ class PriorLike(Family):
 
 
 class DeepInteraction(Family):
-    """Large-data regime: the target is a random lookup table over the joint
-    discretisation of k features (b bins each), mixed with a smooth additive
-    part.  The table has b**k cells with independent values, so a learner
-    needs on the order of 10 x b**k rows to resolve it.  Trees and MLPs keep
-    improving up to millions of rows; an in-context learner with a bounded
-    context cannot use the extra rows.
+    """Large-data regime: a functional-ANOVA target with interaction terms of
+    increasing order.  Each of the k interacting features is cut into b
+    equiprobable bins; the latent is a weighted sum of random lookup tables
+    over single features (order 1), over pairs (order 2), triples, ... up to
+    order k.  A learner resolves order-o terms once it has seen enough rows
+    per b**o cell, so accuracy keeps improving with data for a long time
+    (marginals with 1k rows, pairs with 10k, triples with 100k, ...), the
+    way gradient-boosted trees improve on large real tables.  An in-context
+    learner with a bounded context cannot use the extra rows.
 
-    difficulty 0 -> k=2, b=3 (9 cells);  difficulty 1 -> k=8, b=6 (1.7M cells).
-    The table weight grows from 0.5 to 1.0 with difficulty.
+    difficulty 0 -> k=2, b=3, order weights decay fast (almost additive);
+    difficulty 1 -> k=6, b=6, the high-order terms carry most of the
+    variance (46 656 cells in the top-order table).
     """
 
     name = "deep_interaction"
@@ -275,29 +279,49 @@ class DeepInteraction(Family):
     def _build_world(self):
         d = self.difficulty
         w = self.world
-        self.k = 2 + int(round(6 * d))
+        self.k = min(self.n_features, 2 + int(round(4 * d)))
         self.bins = 3 + int(round(3 * d))
-        self.k = min(self.k, self.n_features)
-        self.table_weight = _lerp(0.5, 1.0, d)
+        self.order_decay = _lerp(0.35, 1.6, d)  # weight of order o is decay**(o-1)
+        self.terms_per_order = 3
         self.edges = np.array([math.sqrt(2) * _erfinv(2 * q - 1) for q in np.linspace(0, 1, self.bins + 1)[1:-1]])
-        self.n_cells = self.bins**self.k
-        self.table = w.standard_normal(self.n_cells).astype(np.float32)
-        self.radix = self.bins ** np.arange(self.k)
+        self.terms = []  # (order, feature index tuple, table, weight)
+        for order in range(1, self.k + 1):
+            if order == 1:
+                subsets = [(j,) for j in range(self.k)]
+            elif order == self.k:
+                subsets = [tuple(range(self.k))]
+            else:
+                subsets = []
+                while len(subsets) < self.terms_per_order:
+                    cand = tuple(sorted(w.choice(self.k, order, replace=False).tolist()))
+                    if cand not in subsets:
+                        subsets.append(cand)
+            weight = self.order_decay ** (order - 1) / math.sqrt(len(subsets))
+            for sub in subsets:
+                self.terms.append((order, np.array(sub), w.standard_normal(self.bins**order).astype(np.float32), weight))
+        self.n_cells_top = self.bins**self.k
         self.beta = w.standard_normal(self.n_features) / math.sqrt(self.n_features)
 
     def _latent(self, rng, n, start):
         Xn = rng.standard_normal((n, self.n_features))
-        cell = np.zeros(n, dtype=np.int64)
-        for j in range(self.k):
-            cell += np.searchsorted(self.edges, Xn[:, j]) * self.radix[j]
-        z_table = self.table[cell]
-        z_add = np.tanh(Xn @ self.beta)
-        z = self.table_weight * z_table + (1 - self.table_weight) * z_add / (np.std(z_add) + 1e-9)
+        binned = np.searchsorted(self.edges, Xn[:, : self.k])  # (n, k) in [0, bins)
+        z = 0.2 * np.tanh(Xn @ self.beta)  # weak smooth part over all features
+        for order, sub, table, weight in self.terms:
+            cell = np.zeros(n, dtype=np.int64)
+            for i, j in enumerate(sub):
+                cell += binned[:, j] * self.bins**i
+            z = z + weight * table[cell]
         X = {f"num_{j}": Xn[:, j].astype(np.float32) for j in range(self.n_features)}
         return X, z, None, {}
 
     def knobs(self):
-        return {"k_interacting": self.k, "bins": self.bins, "n_cells": int(self.n_cells), "table_weight": self.table_weight}
+        var = {}
+        for order, sub, table, weight in self.terms:
+            var[order] = var.get(order, 0.0) + weight**2
+        tot = sum(var.values())
+        return {"k_interacting": self.k, "bins": self.bins, "order_decay": self.order_decay,
+                "n_cells_top_order": int(self.n_cells_top),
+                "variance_share_by_order": {int(o): round(v / tot, 3) for o, v in sorted(var.items())}}
 
 
 def _erfinv(x):
@@ -390,11 +414,16 @@ class ManyClasses(Family):
         self.props = self.class_proportions()
         self.target_bayes_acc = 0.75
         self.spread = 1.0  # set by _calibrate
+        self.class_scale = np.exp(0.3 * w.standard_normal(self.n_classes))  # per-class isotropic std factor
         self.d_obs = min(max(self.d_lat, 20), self.n_features)
         q, _ = np.linalg.qr(w.standard_normal((self.d_obs, self.d_obs)))
         self.rot = q[:, : self.d_lat]  # (d_obs, d_lat) orthonormal columns
+        q2, _ = np.linalg.qr(w.standard_normal((self.d_obs, self.d_obs)))
+        self.rot2 = q2
         self.n_noise = self.n_features - self.d_obs
-        self.warp_a = w.uniform(0.5, 2.0, self.d_obs)
+        # elementwise monotone but wiggly warp x + c*sin(w x) with c*w < 1
+        self.warp_w = w.uniform(2.0, 4.0, self.d_obs)
+        self.warp_c = 0.95 / self.warp_w
 
     def _calibrate(self):
         """Bisect the within-class spread so that the Bayes accuracy on a
@@ -411,14 +440,15 @@ class ManyClasses(Family):
 
     def _posterior(self, rng, n):
         y = rng.choice(self.n_classes, size=n, p=self.props).astype(np.int32)
-        u = self.centers[y] + self.spread * rng.standard_normal((n, self.d_lat))
+        sd = self.spread * self.class_scale  # (C,)
+        u = self.centers[y] + sd[y, None] * rng.standard_normal((n, self.d_lat))
         logp = np.empty((n, self.n_classes), dtype=np.float64)
         uu = (u**2).sum(1)[:, None]
         cc = (self.centers**2).sum(1)[None, :]
         for s in range(0, n, 20_000):
             e = slice(s, min(n, s + 20_000))
-            logp[e] = -(uu[e] + cc - 2 * u[e] @ self.centers.T) / (2 * self.spread**2)
-        logp += np.log(self.props)[None, :]
+            logp[e] = -(uu[e] + cc - 2 * u[e] @ self.centers.T) / (2 * sd[None, :] ** 2)
+        logp += (np.log(self.props) - self.d_lat * np.log(sd))[None, :]
         logp -= logp.max(1, keepdims=True)
         post = np.exp(logp)
         post /= post.sum(1, keepdims=True)
@@ -428,7 +458,8 @@ class ManyClasses(Family):
         rng = np.random.default_rng([self.seed, 15485863, int(start)])
         y, bayes, u = self._posterior(rng, n)
         obs = u @ self.rot.T  # (n, d_obs), injective
-        obs = np.sinh(obs * self.warp_a) / self.warp_a  # monotone elementwise warp
+        obs = obs + self.warp_c * np.sin(self.warp_w * obs)  # monotone elementwise warp
+        obs = obs @ self.rot2.T
         X = {f"num_{j}": obs[:, j].astype(np.float32) for j in range(self.d_obs)}
         if self.n_noise > 0:
             Xn = _noise_block(rng, n, self.n_noise)
@@ -436,7 +467,8 @@ class ManyClasses(Family):
         return Sample(X=X, y=y, bayes=bayes)
 
     def knobs(self):
-        return {"n_classes": self.n_classes, "latent_dim": self.d_lat, "spread": self.spread, "n_noise_features": self.n_noise}
+        return {"n_classes": self.n_classes, "latent_dim": self.d_lat, "spread": self.spread, "n_noise_features": self.n_noise,
+                "class_scale_range": [float(self.class_scale.min()), float(self.class_scale.max())]}
 
 
 class HighDimensional(Family):
