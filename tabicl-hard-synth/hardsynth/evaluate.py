@@ -94,7 +94,9 @@ def make_model(name: str, meta: dict, args):
     if name == "tabicl":
         from tabicl import TabICLClassifier, TabICLRegressor
 
-        kw = dict(device=args.device) if args.device else {}
+        kw = dict(n_estimators=args.tabicl_n_estimators, batch_size=args.tabicl_batch_size)
+        if args.device:
+            kw["device"] = args.device
         return ("tabicl", TabICLClassifier(**kw) if cls else TabICLRegressor(**kw))
     if name == "tabicl-ft":
         from tabicl import FinetunedTabICLClassifier, FinetunedTabICLRegressor
@@ -127,10 +129,16 @@ def _fit(kind, model, Xtr, ytr, args, rng):
     return {}
 
 
-def _metrics(task, model, Xte, yte, n_classes):
+def _chunked(fn, X, chunk):
+    if not chunk or len(X) <= chunk:
+        return fn(X)
+    return np.concatenate([fn(X.iloc[i : i + chunk]) for i in range(0, len(X), chunk)])
+
+
+def _metrics(task, model, Xte, yte, n_classes, chunk=None):
     out = {}
     if task == "classification":
-        proba = model.predict_proba(Xte)
+        proba = _chunked(model.predict_proba, Xte, chunk)
         pred = np.asarray(model.classes_)[proba.argmax(1)]
         out["accuracy"] = float(accuracy_score(yte, pred))
         labels = np.asarray(model.classes_)
@@ -143,7 +151,7 @@ def _metrics(task, model, Xte, yte, n_classes):
         except ValueError:
             out["roc_auc"] = float("nan")
     else:
-        pred = model.predict(Xte)
+        pred = _chunked(model.predict, Xte, chunk)
         out["rmse"] = float(np.sqrt(mean_squared_error(yte, pred)))
         out["r2"] = float(r2_score(yte, pred))
     return out
@@ -152,7 +160,9 @@ def _metrics(task, model, Xte, yte, n_classes):
 def evaluate(args) -> dict:
     df, meta = load_dataset(args.data)
     task = meta["task"]
-    feats = meta["columns"]
+    feats = [c for c in meta["columns"] if c not in set(getattr(args, "drop_columns", None) or [])]
+    if getattr(args, "drop_columns", None):
+        meta = dict(meta, columns=feats, categorical=[c for c in meta["categorical"] if c in feats])
     train = df[df["split"] == 0]
     test = df[df["split"] == 1]
     if args.test_rows and len(test) > args.test_rows:
@@ -180,16 +190,26 @@ def evaluate(args) -> dict:
             t0 = time.time()
             info = _fit(kind, model, Xtr, ytr, args, rng)
             t1 = time.time()
-            m = _metrics(task, model, Xte, yte, meta["n_classes"])
+            chunk = args.tabicl_predict_chunk if kind in ("tabicl", "tabicl-ft") else None
+            m = _metrics(task, model, Xte, yte, meta["n_classes"], chunk)
             t2 = time.time()
             rec = {"model": name, "n_train": int(n), **m, "fit_seconds": round(t1 - t0, 2), "predict_seconds": round(t2 - t1, 2), **info}
             records.append(rec)
             print(json.dumps(rec), file=sys.stderr)
     result = {"dataset": str(args.data), "family": meta["family"], "difficulty": meta["difficulty"], "task": task,
               "n_test": int(len(test)), "bayes": bayes, "knobs": meta["knobs"], "records": records,
+              "dropped_columns": list(getattr(args, "drop_columns", None) or []),
               "hardware": meta.get("hardware"), "versions": meta.get("versions"), "command": " ".join(sys.argv)}
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "results.json").write_text(json.dumps(result, indent=2))
+    out_file = args.out / "results.json"
+    if getattr(args, "append", False) and out_file.exists():
+        old = json.loads(out_file.read_text())
+        new_keys = {(r["model"], r["n_train"]) for r in records}
+        kept = [r for r in old["records"] if (r["model"], r["n_train"]) not in new_keys]
+        result["records"] = kept + records
+        result["n_test"] = {"previous": old.get("n_test"), "this_run": int(len(test))}
+        result["commands"] = old.get("commands", [old.get("command")]) + [result["command"]]
+    out_file.write_text(json.dumps(result, indent=2))
     plot_learning_curve(result, args.out / "learning_curve.svg")
     return result
 
@@ -241,10 +261,16 @@ def main(argv=None):
     p.add_argument("--test-rows", type=int, default=100_000, help="subsample the test split to this many rows")
     p.add_argument("--mlp-max-rows", type=int, default=300_000, help="skip the sklearn MLP above this size")
     p.add_argument("--tabicl-max-context", type=int, default=100_000)
+    p.add_argument("--tabicl-n-estimators", type=int, default=8, help="TabICL ensemble size (memory and time scale with it)")
+    p.add_argument("--tabicl-batch-size", type=int, default=8, help="ensemble members per forward pass")
+    p.add_argument("--tabicl-predict-chunk", type=int, default=5000, help="test rows per predict call for TabICL models")
     p.add_argument("--ft-epochs", type=int, default=10)
     p.add_argument("--device", default=None)
     p.add_argument("--n-jobs", type=int, default=-1)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--append", action="store_true", help="merge into an existing results.json instead of overwriting it")
+    p.add_argument("--drop-columns", nargs="*", default=None,
+                   help="feature columns to hide from every model, e.g. group_id (BeyondArena drops the group index)")
     evaluate(p.parse_args(argv))
 
 

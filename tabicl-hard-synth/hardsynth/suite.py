@@ -49,11 +49,16 @@ def main(argv=None):
     p.add_argument("--test-rows", type=int, default=100_000)
     p.add_argument("--mlp-max-rows", type=int, default=300_000)
     p.add_argument("--tabicl-max-context", type=int, default=100_000)
+    p.add_argument("--tabicl-n-estimators", type=int, default=8)
+    p.add_argument("--tabicl-batch-size", type=int, default=8)
+    p.add_argument("--tabicl-predict-chunk", type=int, default=5000)
     p.add_argument("--ft-epochs", type=int, default=10)
     p.add_argument("--device", default=None)
     p.add_argument("--n-jobs", type=int, default=-1)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--max-gb", type=float, default=8.0)
+    p.add_argument("--drop-columns", nargs="*", default=None)
+    p.add_argument("--append", action="store_true")
     a = p.parse_args(argv)
 
     config = yaml.safe_load(a.config.read_text())
@@ -75,8 +80,9 @@ def main(argv=None):
         if a.evaluate:
             ev = argparse.Namespace(data=out, out=(a.out or a.data_dir / "eval") / name, models=a.models,
                                     train_sizes=a.train_sizes, test_rows=a.test_rows, mlp_max_rows=a.mlp_max_rows,
-                                    tabicl_max_context=a.tabicl_max_context, ft_epochs=a.ft_epochs, device=a.device,
-                                    n_jobs=a.n_jobs, seed=a.seed)
+                                    tabicl_max_context=a.tabicl_max_context, tabicl_n_estimators=a.tabicl_n_estimators,
+                                    tabicl_batch_size=a.tabicl_batch_size, tabicl_predict_chunk=a.tabicl_predict_chunk, ft_epochs=a.ft_epochs, device=a.device,
+                                    n_jobs=a.n_jobs, seed=a.seed, drop_columns=a.drop_columns, append=a.append)
             t0 = time.time()
             run_evaluate(ev)
             print(f"[{name}] evaluated in {time.time() - t0:.0f}s", file=sys.stderr)

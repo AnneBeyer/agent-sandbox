@@ -26,13 +26,40 @@ a concrete picture of the data the model has seen:
 | target functions | random MLP/tree/graph SCMs, smooth, noise std <= 0.3 | irregular, high-frequency, deep interactions |
 | feature scale | standardised, clipped at 4 std at inference | heavy tails, outliers |
 
-BeyondArena (arXiv:2606.30410) reports that TabPFN-2.6 / TabICLv2 / TabDPT
-win on tiny-to-medium IID tables but are beaten by tuned XGBoost,
-CatBoost, LightGBM and RealMLP on the large (>= 100k rows), high-dimensional,
-temporal and grouped subsets. The subsets overlap (large tables are
-over-represented among the temporal and high-dimensional ones), so the
-paper cannot say which axis causes the loss. A synthetic generator with one
-knob per axis can.
+BeyondArena (arXiv:2606.30410; 142 datasets, 11 models, Elo calibrated so
+that a default XGBoost scores 1000) defines its sub-benchmarks as: Tiny
+100 <= n <= 1k, Small 1k < n <= 10k, Medium 10k < n <= 100k, Large
+n > 100k training rows; Low <= 100 and High > 100 columns after
+preprocessing; High Card. = at least one categorical column with more than
+50 categories; plus Text, IID, Temporal and Grouped. Datasets with more
+than 1.25M rows are subsampled to 1M training rows. TabPFN-2.6 and TabDPT
+were only run up to 100k rows; TabICLv2 ran everywhere, with its ensemble
+reduced to one member on the 5 largest datasets.
+
+Its findings, as far as they matter for this generator:
+
+* Tuned RealMLP leads the overall leaderboard (Elo 1283), ahead of
+  TabPFN-2.6 (1224), TabM, CatBoost and TabICLv2 (1205). TFMs rank highest
+  by default performance and win or tie on 70% of the datasets, but trail
+  tuned traditional models on the non-IID, Large, High-dim and High Card.
+  sub-benchmarks.
+* A regression of the best TFM's rank on the dataset properties finds only
+  two significant effects: more than 100k training rows (+8.0 ranks of 28,
+  p < 0.001) and grouped splits (+5.9, p < 0.001). Temporal, high
+  dimensionality and high cardinality are significant on their own but
+  not once size is controlled for, because 57%, 35% and 43% of those
+  datasets are large. The paper itself notes that the sub-benchmarks
+  overlap and cannot separate the axes.
+* TFMs were evaluated with in-context learning only; fine-tuning is
+  listed as a limitation and left open. That is the gap this experiment
+  targets.
+* For grouped data, BeyondArena drops the group index column for
+  label-per-sample datasets "to prevent models from overfitting to it".
+
+A synthetic generator with one knob per axis can do what the benchmark
+cannot: vary size, grouping, drift, width, cardinality and target
+irregularity independently, at any number of rows, with the Bayes error
+known.
 
 ## The eight families
 
