@@ -5,96 +5,101 @@
   "task": "classification",
   "n_test": 50000,
   "bayes": {
-    "accuracy": 0.8365024328231812
+    "accuracy": 0.839929461479187
   },
   "knobs": {
-    "k_interacting": 4,
+    "k_interacting": 3,
     "bins": 4,
-    "n_cells": 256,
-    "table_weight": 0.65
+    "order_decay": 0.725,
+    "n_cells_top_order": 64,
+    "variance_share_by_order": {
+      "1": 0.555,
+      "2": 0.292,
+      "3": 0.153
+    }
   },
   "records": [
     {
       "model": "lgbm",
       "n_train": 1000,
-      "accuracy": 0.43574,
-      "log_loss": 1.0654012505815464,
-      "roc_auc": 0.6233728207101508,
-      "fit_seconds": 0.34,
-      "predict_seconds": 0.25,
-      "n_trees": 59
+      "accuracy": 0.75396,
+      "log_loss": 0.583227372225176,
+      "roc_auc": 0.9005988776823256,
+      "fit_seconds": 0.37,
+      "predict_seconds": 0.34,
+      "n_trees": 88
     },
     {
       "model": "mlp",
       "n_train": 1000,
-      "accuracy": 0.425,
-      "log_loss": 1.062008261680603,
-      "roc_auc": 0.61082640881953,
-      "fit_seconds": 0.13,
-      "predict_seconds": 0.11
+      "accuracy": 0.39808,
+      "log_loss": 1.0842208862304688,
+      "roc_auc": 0.585118268127713,
+      "fit_seconds": 0.15,
+      "predict_seconds": 0.13
     },
     {
       "model": "linear",
       "n_train": 1000,
-      "accuracy": 0.4472,
-      "log_loss": 1.0509482622146606,
-      "roc_auc": 0.6326405867904464,
+      "accuracy": 0.39902,
+      "log_loss": 1.080817461013794,
+      "roc_auc": 0.5984484502548159,
       "fit_seconds": 0.01,
-      "predict_seconds": 0.05
+      "predict_seconds": 0.07
     },
     {
       "model": "lgbm",
       "n_train": 10000,
-      "accuracy": 0.56854,
-      "log_loss": 0.8875071030544681,
-      "roc_auc": 0.7572282535276414,
-      "fit_seconds": 2.6,
-      "predict_seconds": 1.49,
-      "n_trees": 260
+      "accuracy": 0.82158,
+      "log_loss": 0.40897899667132953,
+      "roc_auc": 0.9463332865645017,
+      "fit_seconds": 1.78,
+      "predict_seconds": 0.69,
+      "n_trees": 150
     },
     {
       "model": "mlp",
       "n_train": 10000,
-      "accuracy": 0.4729,
-      "log_loss": 1.0339930057525635,
-      "roc_auc": 0.6538250595804401,
-      "fit_seconds": 1.61,
+      "accuracy": 0.49752,
+      "log_loss": 1.1102508306503296,
+      "roc_auc": 0.6848876620122649,
+      "fit_seconds": 2.73,
       "predict_seconds": 0.13
     },
     {
       "model": "linear",
       "n_train": 10000,
-      "accuracy": 0.48222,
-      "log_loss": 1.0206902027130127,
-      "roc_auc": 0.6557675254515997,
+      "accuracy": 0.41944,
+      "log_loss": 1.0480527877807617,
+      "roc_auc": 0.6222181916053875,
       "fit_seconds": 0.02,
-      "predict_seconds": 0.07
+      "predict_seconds": 0.05
     },
     {
       "model": "lgbm",
       "n_train": 100000,
-      "accuracy": 0.73456,
-      "log_loss": 0.634287465243085,
-      "roc_auc": 0.8935935324348817,
-      "fit_seconds": 17.39,
-      "predict_seconds": 4.85,
-      "n_trees": 997
+      "accuracy": 0.83188,
+      "log_loss": 0.37002818235205015,
+      "roc_auc": 0.9540060559883762,
+      "fit_seconds": 8.05,
+      "predict_seconds": 1.72,
+      "n_trees": 387
     },
     {
       "model": "mlp",
       "n_train": 100000,
-      "accuracy": 0.54596,
-      "log_loss": 0.9771409630775452,
-      "roc_auc": 0.737115601100113,
-      "fit_seconds": 28.73,
-      "predict_seconds": 0.12
+      "accuracy": 0.76224,
+      "log_loss": 0.5402746796607971,
+      "roc_auc": 0.9127681196988863,
+      "fit_seconds": 23.26,
+      "predict_seconds": 0.14
     },
     {
       "model": "linear",
       "n_train": 100000,
-      "accuracy": 0.4872,
-      "log_loss": 1.0168848037719727,
-      "roc_auc": 0.6591167383677413,
+      "accuracy": 0.41282,
+      "log_loss": 1.0447030067443848,
+      "roc_auc": 0.6242649959994344,
       "fit_seconds": 0.13,
       "predict_seconds": 0.07
     }
@@ -113,5 +118,5 @@
     "scikit-learn": "1.9.1",
     "lightgbm": "4.7.0"
   },
-  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000"
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000 --only deep_interaction_d0.3 deep_interaction_d0.8 many_classes_d0.3 many_classes_d0.6"
 }

@@ -61,9 +61,6 @@ def main(argv=None):
         plot_grid(df, a.grid_svg)
 
 
-if __name__ == "__main__":
-    main()
-
 
 def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
     """Small multiples: one panel per dataset, metric vs training rows, with
@@ -107,5 +104,8 @@ def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.01))
     fig.tight_layout(rect=(0, 0.04, 1, 1))
-    fig.savefig(path, format="svg")
+    fig.savefig(path, format=Path(path).suffix.lstrip(".") or "svg")
     plt.close(fig)
+
+if __name__ == "__main__":
+    main()

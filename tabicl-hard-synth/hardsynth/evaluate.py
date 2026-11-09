@@ -228,7 +228,7 @@ def plot_learning_curve(result: dict, path: Path, title: str | None = None):
     ax.tick_params(colors=INK["secondary"])
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout()
-    fig.savefig(path, format="svg")
+    fig.savefig(path, format=Path(path).suffix.lstrip(".") or "svg")
     plt.close(fig)
 
 
