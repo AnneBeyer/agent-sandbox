@@ -3,9 +3,12 @@
   "family": "grouped_entities",
   "difficulty": 0.3,
   "task": "classification",
-  "n_test": 50000,
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
   "bayes": {
-    "accuracy": 0.7671085000038147
+    "accuracy": 0.771057665348053
   },
   "knobs": {
     "n_train_groups": 398,
@@ -97,8 +100,29 @@
       "roc_auc": 0.688408324581078,
       "fit_seconds": 0.52,
       "predict_seconds": 0.08
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.5286,
+      "log_loss": 0.9805591702461243,
+      "roc_auc": 0.742392617998047,
+      "fit_seconds": 0.59,
+      "predict_seconds": 39.72,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.5502,
+      "log_loss": 0.9964607357978821,
+      "roc_auc": 0.7743125460378507,
+      "fit_seconds": 0.77,
+      "predict_seconds": 403.44,
+      "context_rows": 10000
     }
   ],
+  "dropped_columns": [],
   "hardware": {
     "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
     "cpu_count": 4,
@@ -113,5 +137,9 @@
     "scikit-learn": "1.9.1",
     "lightgbm": "4.7.0"
   },
-  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000"
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/grouped_entities_d0.3 --out journal/2026-11-09-generator-baselines/grouped_entities_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/grouped_entities_d0.3 --out journal/2026-11-09-generator-baselines/grouped_entities_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
 }

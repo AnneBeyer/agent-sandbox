@@ -3,9 +3,12 @@
   "family": "many_classes",
   "difficulty": 0.3,
   "task": "classification",
-  "n_test": 50000,
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
   "bayes": {
-    "accuracy": 0.7486082911491394
+    "accuracy": 0.749783992767334
   },
   "knobs": {
     "n_classes": 32,
@@ -101,8 +104,29 @@
       "roc_auc": 0.9700312521979023,
       "fit_seconds": 4.79,
       "predict_seconds": 0.46
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.6646,
+      "log_loss": 1.0982640981674194,
+      "roc_auc": 0.9671382989586843,
+      "fit_seconds": 0.56,
+      "predict_seconds": 66.7,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.7216,
+      "log_loss": 0.8844143748283386,
+      "roc_auc": 0.9774535228225931,
+      "fit_seconds": 0.55,
+      "predict_seconds": 580.09,
+      "context_rows": 10000
     }
   ],
+  "dropped_columns": [],
   "hardware": {
     "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
     "cpu_count": 4,
@@ -117,5 +141,9 @@
     "scikit-learn": "1.9.1",
     "lightgbm": "4.7.0"
   },
-  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000 --only deep_interaction_d0.3 deep_interaction_d0.8 many_classes_d0.3 many_classes_d0.6"
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/many_classes_d0.3 --out journal/2026-11-09-generator-baselines/many_classes_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000 --only deep_interaction_d0.3 deep_interaction_d0.8 many_classes_d0.3 many_classes_d0.6",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/many_classes_d0.3 --out journal/2026-11-09-generator-baselines/many_classes_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
 }
