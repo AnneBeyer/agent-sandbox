@@ -730,7 +730,10 @@ split (standard error about 0.007).</p>
 </tbody>
 </table>
 <p><img src="learning_curves_grid.svg"
-alt="Learning curves of all 16 datasets" /></p>
+alt="Learning curves of the 16 smoke datasets" /></p>
+<p>Markers distinguish the models where curves coincide (on
+<code>irregular</code> the MLP and the linear model both sit at
+chance).</p>
 <p>Per-dataset plots and raw numbers are in
 <code>&lt;dataset&gt;/learning_curve.svg</code> and
 <code>&lt;dataset&gt;/results.json</code>.</p>
@@ -996,22 +999,25 @@ MLP jumps from 0.50 to 0.76 between 10k and 100k rows. At difficulty
 0.8, where 74% of the variance sits in 4th- and 5th-order interactions
 over 3 125 cells, LightGBM is at 0.63 and still gaining 0.15 per decade;
 the MLP has barely left chance. A separate 1.1M-row version of the same
-dataset (<code>deep_interaction_d0.8_1M/</code>) confirms the trend:
-LightGBM goes from 0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s
-fit on 4 cores) against a Bayes accuracy of 0.83, so a further decade of
-data is still worth about 0.1 accuracy. This is the family that models
-"more rows keep helping": TabICL is the most accurate model at 10k rows
-(0.549 vs 0.482) and is capped there, while LightGBM continues to 0.74
-at 1M rows.</li>
+dataset, LightGBM only (<a
+href="deep_interaction_d0.8_1M/learning_curve.svg">learning curve</a>,
+not part of the grid figure above), confirms the trend: LightGBM goes
+from 0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s fit on 4
+cores) against a Bayes accuracy of 0.83, so a further decade of data is
+still worth about 0.1 accuracy. This is the family that models "more
+rows keep helping": TabICL is the most accurate model at 10k rows (0.549
+vs 0.482) and is capped there, while LightGBM continues to 0.74 at 1M
+rows.</li>
 <li><strong><code>irregular</code></strong>: the scikit-learn MLP and
-the linear model stay at chance (0.33) for every training size, LightGBM
-climbs to 0.58 (difficulty 0.3) and 0.40 (0.8) against a Bayes accuracy
-of 0.84. This is the Grinsztajn et al. regime: high-frequency targets
-favour trees over smooth function approximators. Zero-shot TabICL does
-better than LightGBM at equal rows (0.530 vs 0.492 at 10k, difficulty
-0.3) but is at chance at difficulty 0.8 like everything else. Difficulty
-0.8 (8 cycles per standard deviation, 5-bit parity) is very hard for
-everything; difficulty 0.4 to 0.6 is the informative range.</li>
+the linear model stay at chance (0.33) for every training size (their
+curves lie on top of each other in the plots), LightGBM climbs to 0.58
+(difficulty 0.3) and 0.40 (0.8) against a Bayes accuracy of 0.84. This
+is the Grinsztajn et al. regime: high-frequency targets favour trees
+over smooth function approximators. Zero-shot TabICL does better than
+LightGBM at equal rows (0.530 vs 0.492 at 10k, difficulty 0.3) but is at
+chance at difficulty 0.8 like everything else. Difficulty 0.8 (8 cycles
+per standard deviation, 5-bit parity) is very hard for everything;
+difficulty 0.4 to 0.6 is the informative range.</li>
 <li><strong><code>high_cardinality</code></strong>: at difficulty 0.8 (5
 columns with 2 512 Zipf-distributed levels, strong pair effects) all
 models are at 0.60 to 0.62 against a Bayes accuracy of 0.83 and gain
