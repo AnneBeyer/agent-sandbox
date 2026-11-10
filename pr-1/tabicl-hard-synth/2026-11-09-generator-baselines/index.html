@@ -354,6 +354,317 @@ targets.</li>
 label-per-sample datasets "to prevent models from overfitting to
 it".</li>
 </ul>
+<h3
+id="leaderboard-update-after-the-paper-core2k-protocol-retrieved-2026-11-10">Leaderboard
+update after the paper (core2k protocol, retrieved 2026-11-10)</h3>
+<p>The live BeyondArena tab of the TabArena leaderboard (<a
+href="https://huggingface.co/spaces/TabArena/leaderboard">https://huggingface.co/spaces/TabArena/leaderboard</a>,
+Space revision <code>d77ab823522c</code>, 2026-11-09) has moved on from
+the paper in two ways: it uses the core2k protocol (2 000 splits instead
+of the paper's 507-split core subset) and it has 42 entries, including
+tabular foundation models that were released after the paper:
+Kumo-Tabular (NVIDIA, three sizes), TabPFN-3.5 and TabPFN-3.5-Fast,
+Seldon, Causilo, LimiX-2, TabFM, EXAONE-Tabular, RealTabPFN-2.5,
+TabDPT-1.3 and TabSwift. The CSVs behind the tab are snapshotted in <a
+href="beyondarena_leaderboard/README.html"><code>beyondarena_leaderboard/</code></a>.
+Elo, with the rank among the 42 entries; dataset counts per subset in
+the header; <code>imp.</code> marks results imputed with a default
+RandomForest where a model could not run:</p>
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>All (142)</th>
+<th>Tiny (52)</th>
+<th>Small (38)</th>
+<th>Medium (30)</th>
+<th>Large (22)</th>
+<th>IID (103)</th>
+<th>Temporal (21)</th>
+<th>Grouped (18)</th>
+<th>High-dim (51)</th>
+<th>High-card. (30)</th>
+<th>Text (16)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kumo-Tabular</td>
+<td>1430 (#1)</td>
+<td>1497 (#1)</td>
+<td>1608 (#1)</td>
+<td>1542 (#1)</td>
+<td>1162 (#8)</td>
+<td>1576 (#1)</td>
+<td>1176 (#1)</td>
+<td>1221 (#4)</td>
+<td>1405 (#1)</td>
+<td>1302 (#1)</td>
+<td>1464 (#1)</td>
+</tr>
+<tr>
+<td>TabPFN-3.5</td>
+<td>1372 (#3)</td>
+<td>1443 (#4)</td>
+<td>1492 (#6)</td>
+<td>1453 (#2)</td>
+<td>1164 (#7)</td>
+<td>1498 (#4)</td>
+<td>1174 (#2)</td>
+<td>1157 (#14)</td>
+<td>1290 (#3)</td>
+<td>1281 (#2)</td>
+<td>1445 (#2)</td>
+</tr>
+<tr>
+<td>Seldon</td>
+<td>1358 (#4)</td>
+<td>1461 (#3)</td>
+<td>1533 (#4)</td>
+<td>1408 (#4)</td>
+<td>1030 (#16)</td>
+<td>1518 (#2)</td>
+<td>1052 (#17)</td>
+<td>1135 (#18)</td>
+<td>1253 (#5)</td>
+<td>1179 (#4)</td>
+<td>1338 (#6)</td>
+</tr>
+<tr>
+<td>Causilo</td>
+<td>1321 (#5)</td>
+<td>1436 (#6)</td>
+<td>1442 (#9)</td>
+<td>1360 (#7)</td>
+<td>1006 (#17)</td>
+<td>1434 (#6)</td>
+<td>1055 (#16)</td>
+<td>1202 (#6)</td>
+<td>1255 (#4)</td>
+<td>1124 (#9)</td>
+<td>1361 (#5)</td>
+</tr>
+<tr>
+<td>LimiX-2</td>
+<td>1289 (#9) [15% imp.]</td>
+<td>1392 (#11)</td>
+<td>1606 (#2)</td>
+<td>1381 (#5)</td>
+<td>not run</td>
+<td>1428 (#9) [6% imp.]</td>
+<td>944 (#26) [57% imp.]</td>
+<td>1139 (#17) [22% imp.]</td>
+<td>1105 (#18) [35% imp.]</td>
+<td>991 (#21) [43% imp.]</td>
+<td>1192 (#10) [31% imp.]</td>
+</tr>
+<tr>
+<td>TabFM</td>
+<td>1273 (#10) [15% imp.]</td>
+<td>1406 (#10)</td>
+<td>1518 (#5)</td>
+<td>1333 (#9)</td>
+<td>not run</td>
+<td>1405 (#10) [6% imp.]</td>
+<td>914 (#28) [57% imp.]</td>
+<td>1150 (#15) [22% imp.]</td>
+<td>1102 (#19) [35% imp.]</td>
+<td>943 (#23) [43% imp.]</td>
+<td>1178 (#11) [31% imp.]</td>
+</tr>
+<tr>
+<td>TabPFN-3</td>
+<td>1229 (#12)</td>
+<td>1347 (#12)</td>
+<td>1349 (#12)</td>
+<td>1215 (#13)</td>
+<td>913 (#24)</td>
+<td>1332 (#12)</td>
+<td>1024 (#18)</td>
+<td>1048 (#28)</td>
+<td>1111 (#16)</td>
+<td>1030 (#18)</td>
+<td>1147 (#17)</td>
+</tr>
+<tr>
+<td>TabPFN-2.6</td>
+<td>1172 (#14) [15% imp.]</td>
+<td>1313 (#15)</td>
+<td>1327 (#13)</td>
+<td>1142 (#17)</td>
+<td>716 (#27) [95% imp.]</td>
+<td>1256 (#14) [6% imp.]</td>
+<td>950 (#25) [51% imp.]</td>
+<td>1071 (#25) [22% imp.]</td>
+<td>1065 (#24) [33% imp.]</td>
+<td>860 (#29) [43% imp.]</td>
+<td>1120 (#21) [25% imp.]</td>
+</tr>
+<tr>
+<td><strong>TabICLv2</strong></td>
+<td>1167 (#17)</td>
+<td>1340 (#13)</td>
+<td>1286 (#14)</td>
+<td>1103 (#22)</td>
+<td>707 (#28)</td>
+<td>1279 (#13)</td>
+<td>817 (#30)</td>
+<td>1055 (#27)</td>
+<td>981 (#29)</td>
+<td>865 (#28)</td>
+<td>1075 (#25)</td>
+</tr>
+<tr>
+<td>TabDPT-1.3</td>
+<td>1121 (#23) [15% imp.]</td>
+<td>1318 (#14)</td>
+<td>1210 (#17)</td>
+<td>1007 (#28)</td>
+<td>not run</td>
+<td>1226 (#16) [6% imp.]</td>
+<td>787 (#31) [57% imp.]</td>
+<td>999 (#36) [22% imp.]</td>
+<td>884 (#32) [35% imp.]</td>
+<td>742 (#32) [43% imp.]</td>
+<td>868 (#32) [31% imp.]</td>
+</tr>
+<tr>
+<td>RealMLP (T+E)</td>
+<td>1223 (#13)</td>
+<td>1278 (#17)</td>
+<td>1247 (#16)</td>
+<td>1216 (#12)</td>
+<td>1274 (#1)</td>
+<td>1250 (#15)</td>
+<td>1172 (#3)</td>
+<td>1246 (#1)</td>
+<td>1199 (#8)</td>
+<td>1153 (#6)</td>
+<td>1227 (#9)</td>
+</tr>
+<tr>
+<td>TabM (T+E)</td>
+<td>1171 (#15)</td>
+<td>1243 (#19)</td>
+<td>1188 (#18)</td>
+<td>1136 (#18)</td>
+<td>1172 (#5)</td>
+<td>1192 (#18)</td>
+<td>1081 (#12)</td>
+<td>1241 (#2)</td>
+<td>1141 (#10)</td>
+<td>1057 (#17)</td>
+<td>1135 (#19)</td>
+</tr>
+<tr>
+<td>CatBoost (T+E)</td>
+<td>1170 (#16)</td>
+<td>1218 (#23)</td>
+<td>1181 (#19)</td>
+<td>1182 (#14)</td>
+<td>1177 (#4)</td>
+<td>1190 (#19)</td>
+<td>1132 (#5)</td>
+<td>1183 (#10)</td>
+<td>1134 (#12)</td>
+<td>1152 (#7)</td>
+<td>1165 (#12)</td>
+</tr>
+<tr>
+<td>LightGBM (T+E)</td>
+<td>1148 (#20)</td>
+<td>1189 (#26)</td>
+<td>1171 (#20)</td>
+<td>1128 (#20)</td>
+<td>1190 (#2)</td>
+<td>1153 (#23)</td>
+<td>1129 (#7)</td>
+<td>1216 (#5)</td>
+<td>1140 (#11)</td>
+<td>1082 (#15)</td>
+<td>1154 (#13)</td>
+</tr>
+<tr>
+<td>XGBoost (T+E)</td>
+<td>1111 (#26)</td>
+<td>1118 (#33)</td>
+<td>1128 (#25)</td>
+<td>1132 (#19)</td>
+<td>1169 (#6)</td>
+<td>1122 (#26)</td>
+<td>1129 (#6)</td>
+<td>1094 (#22)</td>
+<td>1115 (#15)</td>
+<td>1113 (#11)</td>
+<td>1143 (#18)</td>
+</tr>
+<tr>
+<td>XGBoost (default)</td>
+<td>1000 (#32)</td>
+<td>1000 (#42)</td>
+<td>1000 (#32)</td>
+<td>1000 (#29)</td>
+<td>1000 (#18)</td>
+<td>1000 (#33)</td>
+<td>1000 (#21)</td>
+<td>1000 (#34)</td>
+<td>1000 (#27)</td>
+<td>1000 (#20)</td>
+<td>1000 (#29)</td>
+</tr>
+</tbody>
+</table>
+<p>What changed, and what did not:</p>
+<ul>
+<li><strong>TabICLv2 is far behind on every axis this generator
+targets.</strong> It is 17th overall (Elo 1167) and sits <em>below the
+default XGBoost</em> (1000) on Large (707), Temporal (817),
+High-cardinality (865) and High-dimensional (981) data, 27th on Grouped
+(1055). On Tiny and Small data it is still 13th and 14th. The same
+pattern holds for the other open-weight models of its generation
+(TabPFN-2.6, TabDPT).</li>
+<li><strong>Newer foundation models have closed the temporal,
+high-dimensional, high-cardinality and text gaps.</strong> Kumo-Tabular
+is first on every subset except Large (8th, 1162) and Grouped (4th,
+1221); TabPFN-3.5 is second on Temporal, High-cardinality and Text. This
+agrees with the paper's own regression: those axes were confounded with
+size, and a better prior and preprocessing fix them zero-shot.</li>
+<li><strong>Large and grouped data remain open for every foundation
+model.</strong> On Large, tuned and ensembled RealMLP (1274), LightGBM
+(1190), CatBoost (1177), TabM (1172) and XGBoost (1169) all rank above
+the best foundation models (TabPFN-3.5 1164, Kumo-Tabular 1162). On
+Grouped, RealMLP (1246) and TabM (1241) lead, with Kumo-Tabular fourth.
+This is exactly the paper's conclusion, now confirmed against models it
+did not have.</li>
+<li><strong>Licences matter for the fine-tuning question.</strong>
+TabICLv2 is BSD-3 with open pre-training and fine-tuning code.
+Kumo-Tabular is OpenMDW-1.1; TabPFN-3.5, Seldon and Causilo are under
+non-commercial or research licences. Fine-tuning TabICLv2 is therefore
+the only fully open route, and the newer models serve as a reference for
+what a prior can reach zero-shot rather than as drop-in
+replacements.</li>
+</ul>
+<p>Consequences for this experiment:</p>
+<ol type="1">
+<li>The families map one-to-one onto leaderboard subsets where TabICLv2
+is weakest: <code>deep_interaction</code> to Large,
+<code>grouped_entities</code> to Grouped, <code>temporal_drift</code> to
+Temporal, <code>high_cardinality</code> to High-cardinality,
+<code>high_dimensional</code> to High-dimensional. The CPU results above
+reproduce the ordering: TabICLv2 is competitive at equal rows on
+IID-like families and weakest on grouped, high-cardinality and drifting
+data.</li>
+<li>For temporal, high-cardinality and high-dimensional data the
+leaderboard shows that a foundation model <em>can</em> handle them
+zero-shot, so prior-extension fine-tuning of TabICLv2 (continued
+pre-training on synthetic tables with these properties) has a known
+target. For Large and Grouped no foundation model has closed the gap, so
+per-dataset fine-tuning is the only candidate and the fallback remains
+the expected answer.</li>
+<li>The fallback in the next iteration should be RealMLP, tuned and
+ensembled, in addition to LightGBM: it is the top model on both open
+subsets.</li>
+</ol>
 <p>A synthetic generator with one knob per axis can do what the
 benchmark cannot: vary size, grouping, drift, width, cardinality and
 target irregularity independently, at any number of rows, with the Bayes
@@ -1095,9 +1406,13 @@ CPU run stopped at 10k); <code>tabicl-ft</code> fine-tuned on 10k, 100k,
 1M and 10M rows; LightGBM at the same sizes; wall-clock for every fit.
 The decision metric is the share of the gap to Bayes closed per unit of
 compute, against LightGBM as the fallback.</li>
-<li>Replace the scikit-learn MLP by RealMLP or a PyTorch MLP trained for
-a fixed budget; the sklearn version stops too early on the irregular and
-deep-interaction families.</li>
+<li>Replace the scikit-learn MLP by RealMLP (tuned and ensembled, the
+top model on the Large and Grouped leaderboard subsets) or a PyTorch MLP
+trained for a fixed budget; the sklearn version stops too early on the
+irregular and deep-interaction families.</li>
+<li>Compare against the live leaderboard programmatically: every subset
+is a CSV in the Space repository, and the Space also serves the
+leaderboard over MCP (<code>get_beyondarena_leaderboard</code>).</li>
 <li>Use <code>--drop-columns group_id</code> (added) on the grouped
 family so that it compares generalisation rather than memorisation, as
 BeyondArena does.</li>
