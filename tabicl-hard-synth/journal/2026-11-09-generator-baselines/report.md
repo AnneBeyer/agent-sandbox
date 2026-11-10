@@ -56,6 +56,86 @@ Its findings, as far as they matter for this generator:
 * For grouped data, BeyondArena drops the group index column for
   label-per-sample datasets "to prevent models from overfitting to it".
 
+### Leaderboard update after the paper (core2k protocol, retrieved 2026-11-10)
+
+The live BeyondArena tab of the TabArena leaderboard
+(https://huggingface.co/spaces/TabArena/leaderboard, Space revision
+`d77ab823522c`, 2026-11-09) has moved on from the paper in two ways: it uses
+the core2k protocol (2 000 splits instead of the paper's 507-split core
+subset) and it has 42 entries, including tabular foundation models that
+were released after the paper: Kumo-Tabular (NVIDIA, three sizes),
+TabPFN-3.5 and TabPFN-3.5-Fast, Seldon, Causilo, LimiX-2, TabFM, EXAONE-Tabular,
+RealTabPFN-2.5, TabDPT-1.3 and TabSwift. The CSVs behind the tab are
+snapshotted in [`beyondarena_leaderboard/`](beyondarena_leaderboard/README.md).
+Elo, with the rank among the 42 entries; dataset counts per subset in the
+header; `imp.` marks results imputed with a default RandomForest where a
+model could not run:
+
+| model | All (142) | Tiny (52) | Small (38) | Medium (30) | Large (22) | IID (103) | Temporal (21) | Grouped (18) | High-dim (51) | High-card. (30) | Text (16) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Kumo-Tabular | 1430 (#1) | 1497 (#1) | 1608 (#1) | 1542 (#1) | 1162 (#8) | 1576 (#1) | 1176 (#1) | 1221 (#4) | 1405 (#1) | 1302 (#1) | 1464 (#1) |
+| TabPFN-3.5 | 1372 (#3) | 1443 (#4) | 1492 (#6) | 1453 (#2) | 1164 (#7) | 1498 (#4) | 1174 (#2) | 1157 (#14) | 1290 (#3) | 1281 (#2) | 1445 (#2) |
+| Seldon | 1358 (#4) | 1461 (#3) | 1533 (#4) | 1408 (#4) | 1030 (#16) | 1518 (#2) | 1052 (#17) | 1135 (#18) | 1253 (#5) | 1179 (#4) | 1338 (#6) |
+| Causilo | 1321 (#5) | 1436 (#6) | 1442 (#9) | 1360 (#7) | 1006 (#17) | 1434 (#6) | 1055 (#16) | 1202 (#6) | 1255 (#4) | 1124 (#9) | 1361 (#5) |
+| LimiX-2 | 1289 (#9) [15% imp.] | 1392 (#11) | 1606 (#2) | 1381 (#5) | not run | 1428 (#9) [6% imp.] | 944 (#26) [57% imp.] | 1139 (#17) [22% imp.] | 1105 (#18) [35% imp.] | 991 (#21) [43% imp.] | 1192 (#10) [31% imp.] |
+| TabFM | 1273 (#10) [15% imp.] | 1406 (#10) | 1518 (#5) | 1333 (#9) | not run | 1405 (#10) [6% imp.] | 914 (#28) [57% imp.] | 1150 (#15) [22% imp.] | 1102 (#19) [35% imp.] | 943 (#23) [43% imp.] | 1178 (#11) [31% imp.] |
+| TabPFN-3 | 1229 (#12) | 1347 (#12) | 1349 (#12) | 1215 (#13) | 913 (#24) | 1332 (#12) | 1024 (#18) | 1048 (#28) | 1111 (#16) | 1030 (#18) | 1147 (#17) |
+| TabPFN-2.6 | 1172 (#14) [15% imp.] | 1313 (#15) | 1327 (#13) | 1142 (#17) | 716 (#27) [95% imp.] | 1256 (#14) [6% imp.] | 950 (#25) [51% imp.] | 1071 (#25) [22% imp.] | 1065 (#24) [33% imp.] | 860 (#29) [43% imp.] | 1120 (#21) [25% imp.] |
+| **TabICLv2** | 1167 (#17) | 1340 (#13) | 1286 (#14) | 1103 (#22) | 707 (#28) | 1279 (#13) | 817 (#30) | 1055 (#27) | 981 (#29) | 865 (#28) | 1075 (#25) |
+| TabDPT-1.3 | 1121 (#23) [15% imp.] | 1318 (#14) | 1210 (#17) | 1007 (#28) | not run | 1226 (#16) [6% imp.] | 787 (#31) [57% imp.] | 999 (#36) [22% imp.] | 884 (#32) [35% imp.] | 742 (#32) [43% imp.] | 868 (#32) [31% imp.] |
+| RealMLP (T+E) | 1223 (#13) | 1278 (#17) | 1247 (#16) | 1216 (#12) | 1274 (#1) | 1250 (#15) | 1172 (#3) | 1246 (#1) | 1199 (#8) | 1153 (#6) | 1227 (#9) |
+| TabM (T+E) | 1171 (#15) | 1243 (#19) | 1188 (#18) | 1136 (#18) | 1172 (#5) | 1192 (#18) | 1081 (#12) | 1241 (#2) | 1141 (#10) | 1057 (#17) | 1135 (#19) |
+| CatBoost (T+E) | 1170 (#16) | 1218 (#23) | 1181 (#19) | 1182 (#14) | 1177 (#4) | 1190 (#19) | 1132 (#5) | 1183 (#10) | 1134 (#12) | 1152 (#7) | 1165 (#12) |
+| LightGBM (T+E) | 1148 (#20) | 1189 (#26) | 1171 (#20) | 1128 (#20) | 1190 (#2) | 1153 (#23) | 1129 (#7) | 1216 (#5) | 1140 (#11) | 1082 (#15) | 1154 (#13) |
+| XGBoost (T+E) | 1111 (#26) | 1118 (#33) | 1128 (#25) | 1132 (#19) | 1169 (#6) | 1122 (#26) | 1129 (#6) | 1094 (#22) | 1115 (#15) | 1113 (#11) | 1143 (#18) |
+| XGBoost (default) | 1000 (#32) | 1000 (#42) | 1000 (#32) | 1000 (#29) | 1000 (#18) | 1000 (#33) | 1000 (#21) | 1000 (#34) | 1000 (#27) | 1000 (#20) | 1000 (#29) |
+
+What changed, and what did not:
+
+* **TabICLv2 is far behind on every axis this generator targets.** It is
+  17th overall (Elo 1167) and sits *below the default XGBoost* (1000) on
+  Large (707), Temporal (817), High-cardinality (865) and High-dimensional
+  (981) data, 27th on Grouped (1055). On Tiny and Small data it is still
+  13th and 14th. The same pattern holds for the other open-weight models of
+  its generation (TabPFN-2.6, TabDPT).
+* **Newer foundation models have closed the temporal, high-dimensional,
+  high-cardinality and text gaps.** Kumo-Tabular is first on every subset
+  except Large (8th, 1162) and Grouped (4th, 1221); TabPFN-3.5 is second on
+  Temporal, High-cardinality and Text. This agrees with the paper's own
+  regression: those axes were confounded with size, and a better prior and
+  preprocessing fix them zero-shot.
+* **Large and grouped data remain open for every foundation model.** On
+  Large, tuned and ensembled RealMLP (1274), LightGBM (1190), CatBoost
+  (1177), TabM (1172) and XGBoost (1169) all rank above the best foundation
+  models (TabPFN-3.5 1164, Kumo-Tabular 1162). On Grouped, RealMLP (1246)
+  and TabM (1241) lead, with Kumo-Tabular fourth. This is exactly the
+  paper's conclusion, now confirmed against models it did not have.
+* **Licences matter for the fine-tuning question.** TabICLv2 is BSD-3 with
+  open pre-training and fine-tuning code. Kumo-Tabular is OpenMDW-1.1;
+  TabPFN-3.5, Seldon and Causilo are under non-commercial or research
+  licences. Fine-tuning TabICLv2 is therefore the only fully open route,
+  and the newer models serve as a reference for what a prior can reach
+  zero-shot rather than as drop-in replacements.
+
+Consequences for this experiment:
+
+1. The families map one-to-one onto leaderboard subsets where TabICLv2 is
+   weakest: `deep_interaction` to Large, `grouped_entities` to Grouped,
+   `temporal_drift` to Temporal, `high_cardinality` to High-cardinality,
+   `high_dimensional` to High-dimensional. The CPU results above reproduce
+   the ordering: TabICLv2 is competitive at equal rows on IID-like
+   families and weakest on grouped, high-cardinality and drifting data.
+2. For temporal, high-cardinality and high-dimensional data the leaderboard
+   shows that a foundation model *can* handle them zero-shot, so
+   prior-extension fine-tuning of TabICLv2 (continued pre-training on
+   synthetic tables with these properties) has a known target. For Large and
+   Grouped no foundation model has closed the gap, so per-dataset
+   fine-tuning is the only candidate and the fallback remains the expected
+   answer.
+3. The fallback in the next iteration should be RealMLP, tuned and
+   ensembled, in addition to LightGBM: it is the top model on both open
+   subsets.
+
 A synthetic generator with one knob per axis can do what the benchmark
 cannot: vary size, grouping, drift, width, cardinality and target
 irregularity independently, at any number of rows, with the Bayes error
@@ -344,9 +424,13 @@ The grid gives three kinds of datasets:
   wall-clock for every fit. The
   decision metric is the share of the gap to Bayes closed per unit of
   compute, against LightGBM as the fallback.
-* Replace the scikit-learn MLP by RealMLP or a PyTorch MLP trained for a
-  fixed budget; the sklearn version stops too early on the irregular and
-  deep-interaction families.
+* Replace the scikit-learn MLP by RealMLP (tuned and ensembled, the top
+  model on the Large and Grouped leaderboard subsets) or a PyTorch MLP
+  trained for a fixed budget; the sklearn version stops too early on the
+  irregular and deep-interaction families.
+* Compare against the live leaderboard programmatically: every subset is a
+  CSV in the Space repository, and the Space also serves the leaderboard
+  over MCP (`get_beyondarena_leaderboard`).
 * Use `--drop-columns group_id` (added) on the grouped family so that it
   compares generalisation rather than memorisation, as BeyondArena does.
 * Report fit and predict time alongside accuracy (already stored in

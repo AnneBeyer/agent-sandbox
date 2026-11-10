@@ -9,7 +9,11 @@ The families mirror the regimes in which BeyondArena ("Beyond IID: How
 General Are Tabular Foundation Models, Really?", arXiv:2606.30410) finds
 tabular foundation models losing to tuned trees and RealMLP: >= 100k rows,
 high-dimensional tables, temporal splits, grouped (unseen-entity) splits and
-high-cardinality categoricals. Each family has one `difficulty` knob in
+high-cardinality categoricals. The live leaderboard (core2k protocol,
+November 2026) shows that newer foundation models have closed the temporal,
+high-dimensional and high-cardinality gaps while large and grouped data
+stay open, and that TabICLv2 itself ranks below a default XGBoost on four
+of these subsets. Each family has one `difficulty` knob in
 [0, 1]; 0 is inside the prior, 1 is far from it. Every row carries the
 Bayes-optimal reference (`_p_bayes` or `_y_clean`), so learning curves can
 be read against the irreducible error.
