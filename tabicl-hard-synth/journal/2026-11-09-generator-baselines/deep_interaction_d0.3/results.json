@@ -1,0 +1,150 @@
+{
+  "dataset": "data/deep_interaction_d0.3",
+  "family": "deep_interaction",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
+  "bayes": {
+    "accuracy": 0.8399294387483597
+  },
+  "knobs": {
+    "k_interacting": 3,
+    "bins": 4,
+    "order_decay": 0.725,
+    "n_cells_top_order": 64,
+    "variance_share_by_order": {
+      "1": 0.555,
+      "2": 0.292,
+      "3": 0.153
+    }
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.75396,
+      "log_loss": 0.583227372225176,
+      "roc_auc": 0.9005988776823256,
+      "fit_seconds": 0.37,
+      "predict_seconds": 0.34,
+      "n_trees": 88
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.39808,
+      "log_loss": 1.0842208862304688,
+      "roc_auc": 0.585118268127713,
+      "fit_seconds": 0.15,
+      "predict_seconds": 0.13
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.39902,
+      "log_loss": 1.080817461013794,
+      "roc_auc": 0.5984484502548159,
+      "fit_seconds": 0.01,
+      "predict_seconds": 0.07
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.82158,
+      "log_loss": 0.40897899667132953,
+      "roc_auc": 0.9463332865645017,
+      "fit_seconds": 1.78,
+      "predict_seconds": 0.69,
+      "n_trees": 150
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.49752,
+      "log_loss": 1.1102508306503296,
+      "roc_auc": 0.6848876620122649,
+      "fit_seconds": 2.73,
+      "predict_seconds": 0.13
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.41944,
+      "log_loss": 1.0480527877807617,
+      "roc_auc": 0.6222181916053875,
+      "fit_seconds": 0.02,
+      "predict_seconds": 0.05
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.83188,
+      "log_loss": 0.37002818235205015,
+      "roc_auc": 0.9540060559883762,
+      "fit_seconds": 8.05,
+      "predict_seconds": 1.72,
+      "n_trees": 387
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.76224,
+      "log_loss": 0.5402746796607971,
+      "roc_auc": 0.9127681196988863,
+      "fit_seconds": 23.26,
+      "predict_seconds": 0.14
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.41282,
+      "log_loss": 1.0447030067443848,
+      "roc_auc": 0.6242649959994344,
+      "fit_seconds": 0.13,
+      "predict_seconds": 0.07
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.7904,
+      "log_loss": 0.4942954182624817,
+      "roc_auc": 0.927869600606961,
+      "fit_seconds": 0.85,
+      "predict_seconds": 40.05,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.8194,
+      "log_loss": 0.3883659243583679,
+      "roc_auc": 0.9488771963371936,
+      "fit_seconds": 0.54,
+      "predict_seconds": 428.13,
+      "context_rows": 10000
+    }
+  ],
+  "dropped_columns": [],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/deep_interaction_d0.3 --out journal/2026-11-09-generator-baselines/deep_interaction_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000 --only deep_interaction_d0.3 deep_interaction_d0.8 many_classes_d0.3 many_classes_d0.6",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/deep_interaction_d0.3 --out journal/2026-11-09-generator-baselines/deep_interaction_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
+}

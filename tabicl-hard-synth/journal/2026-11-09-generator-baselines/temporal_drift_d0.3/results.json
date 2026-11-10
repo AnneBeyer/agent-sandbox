@@ -1,0 +1,145 @@
+{
+  "dataset": "data/temporal_drift_d0.3",
+  "family": "temporal_drift",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
+  "bayes": {
+    "accuracy": 0.8322331247031689
+  },
+  "knobs": {
+    "drift_amplitude_std": 0.6,
+    "coef_rotation_rad": 0.47123889803846897,
+    "season_weight": 0.3,
+    "n_seasons": 6
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.5464,
+      "log_loss": 0.9480708589536655,
+      "roc_auc": 0.7592171363278588,
+      "fit_seconds": 0.59,
+      "predict_seconds": 0.6,
+      "n_trees": 144
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.63282,
+      "log_loss": 0.8027298450469971,
+      "roc_auc": 0.8128898478103795,
+      "fit_seconds": 0.26,
+      "predict_seconds": 0.15
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.63388,
+      "log_loss": 0.8201125860214233,
+      "roc_auc": 0.8111105631372316,
+      "fit_seconds": 0.01,
+      "predict_seconds": 0.07
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.63402,
+      "log_loss": 0.7872375233942729,
+      "roc_auc": 0.8282924407927726,
+      "fit_seconds": 4.0,
+      "predict_seconds": 2.42,
+      "n_trees": 358
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.66438,
+      "log_loss": 0.736078143119812,
+      "roc_auc": 0.8439225878608917,
+      "fit_seconds": 1.4,
+      "predict_seconds": 0.13
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.6338,
+      "log_loss": 0.8010339140892029,
+      "roc_auc": 0.8152598043793274,
+      "fit_seconds": 0.03,
+      "predict_seconds": 0.06
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.71334,
+      "log_loss": 0.6253058516779761,
+      "roc_auc": 0.8796732953350413,
+      "fit_seconds": 22.04,
+      "predict_seconds": 5.84,
+      "n_trees": 1000
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.74266,
+      "log_loss": 0.5768611431121826,
+      "roc_auc": 0.9014215829289371,
+      "fit_seconds": 13.14,
+      "predict_seconds": 0.13
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.63034,
+      "log_loss": 0.8098003268241882,
+      "roc_auc": 0.8145438671424383,
+      "fit_seconds": 0.22,
+      "predict_seconds": 0.06
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.675,
+      "log_loss": 0.7209228277206421,
+      "roc_auc": 0.8406074299190057,
+      "fit_seconds": 0.88,
+      "predict_seconds": 37.66,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.6808,
+      "log_loss": 0.7269271612167358,
+      "roc_auc": 0.8557625623888646,
+      "fit_seconds": 0.5,
+      "predict_seconds": 404.24,
+      "context_rows": 10000
+    }
+  ],
+  "dropped_columns": [],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/temporal_drift_d0.3 --out journal/2026-11-09-generator-baselines/temporal_drift_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/temporal_drift_d0.3 --out journal/2026-11-09-generator-baselines/temporal_drift_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
+}

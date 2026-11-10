@@ -1,0 +1,145 @@
+{
+  "dataset": "data/grouped_entities_d0.3",
+  "family": "grouped_entities",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
+  "bayes": {
+    "accuracy": 0.767108507245183
+  },
+  "knobs": {
+    "n_train_groups": 398,
+    "n_test_groups": 79,
+    "group_effect_std": 0.3,
+    "d_group_cov": 3
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.48276,
+      "log_loss": 1.0226175166549551,
+      "roc_auc": 0.665357209713702,
+      "fit_seconds": 0.3,
+      "predict_seconds": 0.32,
+      "n_trees": 79
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.4877,
+      "log_loss": 1.0089699138235193,
+      "roc_auc": 0.6683224435282348,
+      "fit_seconds": 0.21,
+      "predict_seconds": 0.21
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.4832,
+      "log_loss": 1.0173994241748914,
+      "roc_auc": 0.6671544657258393,
+      "fit_seconds": 0.02,
+      "predict_seconds": 0.06
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.57158,
+      "log_loss": 0.8700174700043308,
+      "roc_auc": 0.7625399883068762,
+      "fit_seconds": 3.71,
+      "predict_seconds": 2.18,
+      "n_trees": 333
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.6844,
+      "log_loss": 0.6894027300486603,
+      "roc_auc": 0.8574111309866194,
+      "fit_seconds": 2.47,
+      "predict_seconds": 0.22
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.50548,
+      "log_loss": 0.9818248903522904,
+      "roc_auc": 0.6900645270841709,
+      "fit_seconds": 0.06,
+      "predict_seconds": 0.08
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.58344,
+      "log_loss": 0.8591013912679409,
+      "roc_auc": 0.7734864568929769,
+      "fit_seconds": 22.19,
+      "predict_seconds": 6.39,
+      "n_trees": 1000
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.70496,
+      "log_loss": 0.6570156452864807,
+      "roc_auc": 0.8730128733863717,
+      "fit_seconds": 21.6,
+      "predict_seconds": 0.24
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.50444,
+      "log_loss": 0.9875898754851651,
+      "roc_auc": 0.688408324581078,
+      "fit_seconds": 0.52,
+      "predict_seconds": 0.08
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.5286,
+      "log_loss": 0.9805591702461243,
+      "roc_auc": 0.742392617998047,
+      "fit_seconds": 0.59,
+      "predict_seconds": 39.72,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.5502,
+      "log_loss": 0.9964607357978821,
+      "roc_auc": 0.7743125460378507,
+      "fit_seconds": 0.77,
+      "predict_seconds": 403.44,
+      "context_rows": 10000
+    }
+  ],
+  "dropped_columns": [],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/grouped_entities_d0.3 --out journal/2026-11-09-generator-baselines/grouped_entities_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/grouped_entities_d0.3 --out journal/2026-11-09-generator-baselines/grouped_entities_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
+}

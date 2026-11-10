@@ -1,0 +1,154 @@
+{
+  "dataset": "data/irregular_d0.3",
+  "family": "irregular",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
+  "bayes": {
+    "accuracy": 0.8372311437922716
+  },
+  "knobs": {
+    "n_sinusoids": 8,
+    "cycles_per_std": [
+      3.452053533731337,
+      3.5675187288601538,
+      2.075056457677588,
+      2.6086801571584632,
+      2.122718362337578,
+      1.9447745216564551,
+      2.451610596192458,
+      2.7295703291464357
+    ],
+    "parity_bits": 3,
+    "parity_weight": 0.3
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.33932,
+      "log_loss": 1.1060007904357114,
+      "roc_auc": 0.508374272950613,
+      "fit_seconds": 0.16,
+      "predict_seconds": 0.11,
+      "n_trees": 14
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.32914,
+      "log_loss": 1.1264314651489258,
+      "roc_auc": 0.5014236496777996,
+      "fit_seconds": 0.13,
+      "predict_seconds": 0.14
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.33086,
+      "log_loss": 1.1236672401428223,
+      "roc_auc": 0.4968224045744128,
+      "fit_seconds": 0.01,
+      "predict_seconds": 0.06
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.49188,
+      "log_loss": 0.9863704492371134,
+      "roc_auc": 0.6822743283955933,
+      "fit_seconds": 2.95,
+      "predict_seconds": 1.86,
+      "n_trees": 296
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.33278,
+      "log_loss": 1.2354804277420044,
+      "roc_auc": 0.4981681759250418,
+      "fit_seconds": 2.57,
+      "predict_seconds": 0.17
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.33512,
+      "log_loss": 1.1017075777053833,
+      "roc_auc": 0.4992616899523607,
+      "fit_seconds": 0.02,
+      "predict_seconds": 0.07
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.58354,
+      "log_loss": 0.8210322232079944,
+      "roc_auc": 0.7802782920791786,
+      "fit_seconds": 17.76,
+      "predict_seconds": 4.96,
+      "n_trees": 988
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.33258,
+      "log_loss": 1.1434650421142578,
+      "roc_auc": 0.5004361603892021,
+      "fit_seconds": 16.46,
+      "predict_seconds": 0.13
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.33038,
+      "log_loss": 1.098924994468689,
+      "roc_auc": 0.4978759433438816,
+      "fit_seconds": 0.08,
+      "predict_seconds": 0.05
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.4236,
+      "log_loss": 1.0691773891448975,
+      "roc_auc": 0.5992737587006625,
+      "fit_seconds": 0.62,
+      "predict_seconds": 38.52,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.5304,
+      "log_loss": 0.9279477596282959,
+      "roc_auc": 0.7210667998745469,
+      "fit_seconds": 0.76,
+      "predict_seconds": 416.69,
+      "context_rows": 10000
+    }
+  ],
+  "dropped_columns": [],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/irregular_d0.3 --out journal/2026-11-09-generator-baselines/irregular_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/irregular_d0.3 --out journal/2026-11-09-generator-baselines/irregular_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
+}

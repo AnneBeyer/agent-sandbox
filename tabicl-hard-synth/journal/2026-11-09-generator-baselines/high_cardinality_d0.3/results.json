@@ -1,0 +1,145 @@
+{
+  "dataset": "data/high_cardinality_d0.3",
+  "family": "high_cardinality",
+  "difficulty": 0.3,
+  "task": "classification",
+  "n_test": {
+    "previous": 50000,
+    "this_run": 5000
+  },
+  "bayes": {
+    "accuracy": 0.8326243135023117
+  },
+  "knobs": {
+    "n_categorical": 4,
+    "cardinality": 79,
+    "zipf_exponent": 1.1,
+    "pair_weight": 0.3
+  },
+  "records": [
+    {
+      "model": "lgbm",
+      "n_train": 1000,
+      "accuracy": 0.53474,
+      "log_loss": 0.9344632810513238,
+      "roc_auc": 0.7208385456901579,
+      "fit_seconds": 0.3,
+      "predict_seconds": 0.35,
+      "n_trees": 81
+    },
+    {
+      "model": "mlp",
+      "n_train": 1000,
+      "accuracy": 0.54636,
+      "log_loss": 0.9285766985406794,
+      "roc_auc": 0.7303392296593091,
+      "fit_seconds": 0.36,
+      "predict_seconds": 0.22
+    },
+    {
+      "model": "linear",
+      "n_train": 1000,
+      "accuracy": 0.6188,
+      "log_loss": 0.8123146721218538,
+      "roc_auc": 0.7952585968610794,
+      "fit_seconds": 0.04,
+      "predict_seconds": 0.07
+    },
+    {
+      "model": "lgbm",
+      "n_train": 10000,
+      "accuracy": 0.70924,
+      "log_loss": 0.6168930393478927,
+      "roc_auc": 0.8777218288222812,
+      "fit_seconds": 3.11,
+      "predict_seconds": 2.05,
+      "n_trees": 307
+    },
+    {
+      "model": "mlp",
+      "n_train": 10000,
+      "accuracy": 0.71804,
+      "log_loss": 0.628579179331062,
+      "roc_auc": 0.8819982610107733,
+      "fit_seconds": 3.05,
+      "predict_seconds": 0.24
+    },
+    {
+      "model": "linear",
+      "n_train": 10000,
+      "accuracy": 0.74376,
+      "log_loss": 0.5602316472282174,
+      "roc_auc": 0.8989763789745542,
+      "fit_seconds": 0.11,
+      "predict_seconds": 0.09
+    },
+    {
+      "model": "lgbm",
+      "n_train": 100000,
+      "accuracy": 0.77248,
+      "log_loss": 0.496628575017348,
+      "roc_auc": 0.9190104255599314,
+      "fit_seconds": 25.13,
+      "predict_seconds": 7.29,
+      "n_trees": 1000
+    },
+    {
+      "model": "mlp",
+      "n_train": 100000,
+      "accuracy": 0.7687,
+      "log_loss": 0.5006777626157732,
+      "roc_auc": 0.9181079199808574,
+      "fit_seconds": 17.83,
+      "predict_seconds": 0.27
+    },
+    {
+      "model": "linear",
+      "n_train": 100000,
+      "accuracy": 0.7666,
+      "log_loss": 0.5154634635808861,
+      "roc_auc": 0.9137622356244911,
+      "fit_seconds": 0.98,
+      "predict_seconds": 0.09
+    },
+    {
+      "model": "tabicl",
+      "n_train": 1000,
+      "accuracy": 0.5926,
+      "log_loss": 0.8311983346939087,
+      "roc_auc": 0.7839343121270231,
+      "fit_seconds": 0.74,
+      "predict_seconds": 36.55,
+      "context_rows": 1000
+    },
+    {
+      "model": "tabicl",
+      "n_train": 10000,
+      "accuracy": 0.6452,
+      "log_loss": 0.7426251173019409,
+      "roc_auc": 0.8281251491877047,
+      "fit_seconds": 0.73,
+      "predict_seconds": 420.76,
+      "context_rows": 10000
+    }
+  ],
+  "dropped_columns": [],
+  "hardware": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "mem_total_gb": 15.7
+  },
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "command": "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/high_cardinality_d0.3 --out journal/2026-11-09-generator-baselines/high_cardinality_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append",
+  "commands": [
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/suite.py --grid smoke --data-dir data --evaluate --out journal/2026-11-09-generator-baselines --models lgbm mlp linear --train-sizes 1000 10000 100000 --test-rows 50000",
+    "/home/user/agent-sandbox/tabicl-hard-synth/hardsynth/evaluate.py --data data/high_cardinality_d0.3 --out journal/2026-11-09-generator-baselines/high_cardinality_d0.3 --models tabicl --train-sizes 1000 10000 --test-rows 5000 --device cpu --tabicl-n-estimators 4 --tabicl-batch-size 1 --tabicl-predict-chunk 1000 --append"
+  ]
+}
