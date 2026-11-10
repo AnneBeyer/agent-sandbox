@@ -180,7 +180,10 @@ about 0.007).
 | temporal_drift_d0.3 | temporal_drift | 0.30 | accuracy | 0.832 | 0.713 (+0.079 at 100,000) | 0.743 (+0.078 at 100,000) | 0.634 (-0.003 at 100,000) |  |  |
 | temporal_drift_d0.8 | temporal_drift | 0.80 | accuracy | 0.804 | 0.521 (+0.032 at 100,000) | 0.505 (+0.026 at 100,000) | 0.387 (-0.001 at 100,000) |  |  |
 
-![Learning curves of all 16 datasets](learning_curves_grid.svg)
+![Learning curves of the 16 smoke datasets](learning_curves_grid.svg)
+
+Markers distinguish the models where curves coincide (on `irregular` the
+MLP and the linear model both sit at chance).
 
 Per-dataset plots and raw numbers are in `<dataset>/learning_curve.svg` and
 `<dataset>/results.json`.
@@ -254,16 +257,18 @@ Three things stand out.
   10k and 100k rows. At difficulty 0.8, where 74% of the variance sits in
   4th- and 5th-order interactions over 3 125 cells, LightGBM is at 0.63 and
   still gaining 0.15 per decade; the MLP has barely left chance.
-  A separate 1.1M-row version of the same dataset
-  (`deep_interaction_d0.8_1M/`) confirms the trend: LightGBM goes from
-  0.48 (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s fit on 4 cores)
-  against a Bayes accuracy of 0.83, so a further decade of data is still
-  worth about 0.1 accuracy.
+  A separate 1.1M-row version of the same dataset, LightGBM only
+  ([learning curve](deep_interaction_d0.8_1M/learning_curve.svg), not part
+  of the grid figure above), confirms the trend: LightGBM goes from 0.48
+  (10k rows) to 0.63 (100k) to 0.74 (1M rows, 93 s fit on 4 cores) against
+  a Bayes accuracy of 0.83, so a further decade of data is still worth
+  about 0.1 accuracy.
   This is the family that models "more rows keep helping": TabICL is the
   most accurate model at 10k rows (0.549 vs 0.482) and is capped there,
   while LightGBM continues to 0.74 at 1M rows.
 * **`irregular`**: the scikit-learn MLP and the linear model stay at chance
-  (0.33) for every training size, LightGBM climbs to 0.58 (difficulty 0.3)
+  (0.33) for every training size (their curves lie on top of each other in
+  the plots), LightGBM climbs to 0.58 (difficulty 0.3)
   and 0.40 (0.8) against a Bayes accuracy of 0.84. This is the Grinsztajn
   et al. regime: high-frequency targets favour trees over smooth function
   approximators. Zero-shot TabICL does better than LightGBM at equal rows

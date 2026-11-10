@@ -2,7 +2,6 @@
 |---|---|---|---|---|---|---|---|---|---|
 | deep_interaction_d0.3 | deep_interaction | 0.30 | accuracy | 0.840 | 0.832 (+0.010 at 100,000) | 0.762 (+0.265 at 100,000) | 0.419 (-0.007 at 100,000) | 0.819 (+0.029 at 10,000) |  |
 | deep_interaction_d0.8 | deep_interaction | 0.80 | accuracy | 0.829 | 0.628 (+0.146 at 100,000) | 0.408 (+0.030 at 100,000) | 0.390 (+0.007 at 100,000) | 0.549 (+0.125 at 10,000) |  |
-| deep_interaction_d0.8_1M | deep_interaction | 0.80 | accuracy | 0.832 | 0.741 (+0.111 at 1,000,000) |  |  |  |  |
 | grouped_entities_d0.3 | grouped_entities | 0.30 | accuracy | 0.767 | 0.583 (+0.012 at 100,000) | 0.705 (+0.021 at 100,000) | 0.505 (-0.001 at 100,000) | 0.550 (+0.022 at 10,000) |  |
 | grouped_entities_d0.8 | grouped_entities | 0.80 | accuracy | 0.622 | 0.534 (+0.038 at 100,000) | 0.567 (+0.019 at 100,000) | 0.434 (-0.000 at 100,000) | 0.471 (-0.027 at 10,000) |  |
 | high_cardinality_d0.3 | high_cardinality | 0.30 | accuracy | 0.833 | 0.772 (+0.063 at 100,000) | 0.769 (+0.051 at 100,000) | 0.767 (+0.023 at 100,000) | 0.645 (+0.053 at 10,000) |  |

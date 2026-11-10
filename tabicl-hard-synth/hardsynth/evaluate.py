@@ -54,6 +54,10 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # dataviz default categorical palette (light surface), fixed slot order
 PALETTE = {"lgbm": "#2a78d6", "mlp": "#eb6834", "linear": "#1baf7a", "tabicl": "#eda100", "tabicl-ft": "#e87ba4"}
+# distinct marker per model so that coincident curves (e.g. two models at chance) stay visible
+MARKERS = {"lgbm": "o", "mlp": "s", "linear": "^", "tabicl": "D", "tabicl-ft": "v"}
+# draw the weakest model first so that a stronger model's curve stays on top where they coincide
+DRAW_ORDER = ["linear", "lgbm", "mlp", "tabicl", "tabicl-ft"]
 INK = {"primary": "#0b0b0b", "secondary": "#5f5e5a", "grid": "#e1e0d9", "axis": "#c3c2b7", "surface": "#fcfcfb"}
 
 
@@ -230,12 +234,13 @@ def plot_learning_curve(result: dict, path: Path, title: str | None = None):
     fig, ax = plt.subplots(figsize=(6.4, 4.0), dpi=100)
     fig.patch.set_facecolor(INK["surface"])
     ax.set_facecolor(INK["surface"])
-    for name in PALETTE:  # fixed slot order
+    for name in DRAW_ORDER:
         sub = recs[recs["model"] == name] if len(recs) else recs
         if len(sub) == 0:
             continue
         sub = sub.sort_values("n_train")
-        ax.plot(sub["n_train"], sub[metric], color=PALETTE[name], lw=2, marker="o", ms=5, label=name)
+        ax.plot(sub["n_train"], sub[metric], color=PALETTE[name], lw=2, marker=MARKERS[name], ms=6,
+                markeredgecolor=INK["surface"], markeredgewidth=1.2, label=name)
     b = result["bayes"][metric]
     ax.axhline(b, color=INK["secondary"], lw=1.2, ls="--")
     ax.annotate("Bayes optimal", xy=(1, b), xycoords=("axes fraction", "data"), xytext=(-4, 4),
@@ -250,7 +255,9 @@ def plot_learning_curve(result: dict, path: Path, title: str | None = None):
     for s in ("left", "bottom"):
         ax.spines[s].set_color(INK["axis"])
     ax.tick_params(colors=INK["secondary"])
-    ax.legend(frameon=False, fontsize=9)
+    handles, labels = ax.get_legend_handles_labels()
+    order = sorted(range(len(labels)), key=lambda i: list(PALETTE).index(labels[i]))
+    ax.legend([handles[i] for i in order], [labels[i] for i in order], frameon=False, fontsize=9)
     fig.tight_layout()
     fig.savefig(path, format=Path(path).suffix.lstrip(".") or "svg")
     plt.close(fig)

@@ -53,8 +53,11 @@ def main(argv=None):
     p.add_argument("results", nargs="+")
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--grid-svg", type=Path, default=None, help="also draw all learning curves as small multiples")
+    p.add_argument("--exclude", nargs="*", default=None, help="dataset names to leave out of the grid figure")
     a = p.parse_args(argv)
     df = load(a.results)
+    if a.exclude:
+        df = df[~df["dataset"].isin(a.exclude)]
     a.out.write_text(gap_table(df) + "\n")
     print(gap_table(df))
     if a.grid_svg:
@@ -70,7 +73,7 @@ def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    from .evaluate import INK, PALETTE
+    from .evaluate import DRAW_ORDER, INK, MARKERS, PALETTE
 
     datasets = list(dict.fromkeys(df["dataset"]))
     nrows = -(-len(datasets) // ncols)
@@ -80,10 +83,11 @@ def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
         g = df[df["dataset"] == ds]
         metric = g["metric"].iloc[0]
         ax.set_facecolor(INK["surface"])
-        for model in PALETTE:
+        for model in DRAW_ORDER:
             gm = g[g["model"] == model].sort_values("n_train")
             if len(gm):
-                ax.plot(gm["n_train"], gm["value"], color=PALETTE[model], lw=2, marker="o", ms=4, label=model)
+                ax.plot(gm["n_train"], gm["value"], color=PALETTE[model], lw=2, marker=MARKERS[model], ms=5,
+                        markeredgecolor=INK["surface"], markeredgewidth=1.0, label=model)
         ax.axhline(g["bayes"].iloc[0], color=INK["secondary"], lw=1.2, ls="--", label="Bayes optimal")
         ax.set_xscale("log")
         ax.set_title(ds, fontsize=9, loc="left", color=INK["primary"])
@@ -102,6 +106,9 @@ def plot_grid(df: pd.DataFrame, path: Path, ncols: int = 4):
     for ax in axes[:, 0]:
         ax.set_ylabel(df["metric"].iloc[0], fontsize=8, color=INK["primary"])
     handles, labels = axes[0, 0].get_legend_handles_labels()
+    key = lambda i: list(PALETTE).index(labels[i]) if labels[i] in PALETTE else 99
+    order = sorted(range(len(labels)), key=key)
+    handles, labels = [handles[i] for i in order], [labels[i] for i in order]
     fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.01))
     fig.tight_layout(rect=(0, 0.04, 1, 1))
     fig.savefig(path, format=Path(path).suffix.lstrip(".") or "svg")
